@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="col-md-10 jumbotron">
+    <form method="POST">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Start</label>
+                <select class="form-select" name="select_start">
+                    <option selected>Choose...</option>
+                    {% for city in cities %}
+                    <option value="{{city['lat'], city['lon']}}">{{city['name']}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label>Bevorzugtes Team</label>
+                <select class="form-select " name="select_ziel">
+                    <option selected>Choose...</option>
+                    {% for verein in vereinen %}
+                    <option value="{{verein['lat'], verein['lon']}}">{{verein['name']}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label>Bevorzugtes Team</label>
+                <select class="form-select " name="wochentag">
+                    <option value="Montag">Montag</option>
+                    <option value="Dienstag">Dienstag</option>
+                    <option value="Mittwoch">Mittwoch</option>
+                    <option value="Donnerstag">Donnerstag</option>
+                    <option value="Freitag">Freitag</option>
+                    <option value="Samstag">Samstag</option>
+                    <option value="Sonntag">Sonntag</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Maximale Entfernung</label>
+                    <input type="number" name="max_distance" class="form-control" min="0" max="9999999" placeholder="Geben Sie die maximale Entfernung ein">
+                </div>
+                <div class="form-group">
+                    <label>Budget</label>
+                    <input type="number" class="form-control" name="budget" placeholder="Geben Sie Ihr Budget ein">
+                </div>
+                <div class="form-group">
+                    <label>Spielart</label>
+                    <input type="text" class="form-control" name="spielart" placeholder="Geben Sie Ihre bevorzugte Spielart ein">
+                </div>
+                <div class="form-group">
+                    <label>Bevorzugtes Wetter</label>
+                    <input type="text" class="form-control" name="bevorzugtes_wetter" placeholder="Geben Sie Ihr bevorzugtes Wetter ein">
+                </div>
+                <input class="btn" type="submit" value="Submit">
+            </div>
+            <div class="col-md-4">
+                Entscheidung
+                <p>{{start}} {{ziel}} {{distance}}</p>
+            </div>
+
+        </div>
+</form>
+</div>
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Lat</th>
+        <th>Lon</th>
+    </tr>
+    {% for verein in vereinen %}
+    <tr>
+        <td>{{verein['name']}}</td>
+        <td>{{verein['lat']}}</td>
+        <td>{{verein['lon']}}</td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+<div class="row">
+    <!--<form method="POST">
+        <input type="text" name="data" placeholder="Enter something">
+        <input type="submit" value="Submit">
+    </form>-->
+
+
+    <div class="col-md-4">
+        <h2>Getting started</h2>
+        <p>
+            Flask gives you a powerful, patterns-based way to build dynamic websites that
+            enables a clean separation of concerns and gives you full control over markup
+            for enjoyable, agile development.
+        </p>
+        <p><a class="btn btn-default" href="http://flask.pocoo.org/docs/">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Get more libraries</h2>
+        <p>The Python Package Index is a repository of software for the Python programming language.</p>
+        <p><a class="btn btn-default" href="https://pypi.python.org/pypi">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Microsoft Azure</h2>
+        <p>You can easily publish to Microsoft Azure using Visual Studio. Find out how you can host your application using a free trial today.</p>
+        <p><a class="btn btn-default" href="http://azure.microsoft.com">Learn more &raquo;</a></p>
+    </div>
+</div>
+
+{% endblock %}
