@@ -40,3 +40,9 @@ input[type="checkbox"].input-validation-error {
 .validation-summary-valid {
     display: none;
 }
+.select_sy{
+    min-width: 250px;
+}
+.not_show{
+    visibility: hidden;
+}

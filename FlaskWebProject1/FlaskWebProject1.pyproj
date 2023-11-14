@@ -57,6 +57,7 @@
     <Content Include="FlaskWebProject1\csv\cities_data.csv" />
     <Content Include="FlaskWebProject1\imags\OIG %282%29.jpg" />
     <Content Include="FlaskWebProject1\imags\_1387290c-68f3-4e68-84e2-7a9775d9795b.jpg" />
+    <Content Include="FlaskWebProject1\static\scripts\Bundesliga.js" />
     <Content Include="requirements.txt" />
     <Content Include="FlaskWebProject1\static\content\bootstrap.css" />
     <Content Include="FlaskWebProject1\static\content\bootstrap.min.css" />

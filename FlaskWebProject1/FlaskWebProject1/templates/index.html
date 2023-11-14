@@ -1,70 +1,80 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<div class="panel panel-default m-2">
+    <div class="panel-heading">Bundesliga</div>
+    <div class="panel-body">
+        <div class="col-md-12">
+       
+            <div class="row">
+                <form id="myForm">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <!--<label>Start</label>-->
+                            <select class="form-select select_sy" required id="select_start" name="select_start">
+                                <option disabled selected>Start von</option>
+                                {% for city in cities %}
+                                <option value="{{city['lat'], city['lon']}}">{{city['name']}} {{city['country']}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-<div class="col-md-10 jumbotron">
-    <form method="POST">
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label>Start</label>
-                <select class="form-select" name="select_start">
-                    <option selected>Choose...</option>
-                    {% for city in cities %}
-                    <option value="{{city['lat'], city['lon']}}">{{city['name']}}</option>
-                    {% endfor %}
-                </select>
+                        <div class="form-group">
+                            <!--<label>Bevorzugtes Team</label>-->
+                            <select class="form-select select_sy" required id="select_ziel" name="select_ziel">
+                                <option disabled selected>Bevorzugtes Team</option>
+                                {% for verein in vereinen %}
+                                <option value="{{verein['lat'], verein['lon']}}">{{verein['name']}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <!--<label>Bevorzugten Tag</label>-->
+                            <select class="form-select select_sy" id="wochentag" required name="wochentag">
+                                <option disabled selected>Bevorzugten Tag</option>
+                                <option value="Montag">Montag</option>
+                                <option value="Dienstag">Dienstag</option>
+                                <option value="Mittwoch">Mittwoch</option>
+                                <option value="Donnerstag">Donnerstag</option>
+                                <option value="Freitag">Freitag</option>
+                                <option value="Samstag">Samstag</option>
+                                <option value="Sonntag">Sonntag</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-select select_sy" id="bevorzugtes_wetter" required name="bevorzugtes_wetter">
+                                <option disabled selected>Bevorzugtes Wetter</option>
+                                <option value="sunny">sonnig</option>
+                                <option value="cloudy">Bewoelkt</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-select select_sy" id="max_distance" required name="max_distance">
+                                <option disabled selected>Maximale Entfernung</option>
+                                {% for max__distance in range(100, 1800, 50) %}
+                                <option value="{{max__distance}}">{{max__distance}} KM</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-select select_sy" id="budget" name="budget">
+                                <option disabled selected>Budget</option>
+                                {% for bugg in range(100, 5000, 50) %}
+                                <option value="{{bugg}}">{{bugg}} Euro</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="button" onclick="sendFormData()">Send Form Data</button>                    </div>
+                </form>
+                <div class="col-md-4 alert alert-info not_show" id="entscheidung_content">
+              
+                </div>
             </div>
 
-            <div class="form-group col-md-4">
-                <label>Bevorzugtes Team</label>
-                <select class="form-select " name="select_ziel">
-                    <option selected>Choose...</option>
-                    {% for verein in vereinen %}
-                    <option value="{{verein['lat'], verein['lon']}}">{{verein['name']}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label>Bevorzugtes Team</label>
-                <select class="form-select " name="wochentag">
-                    <option value="Montag">Montag</option>
-                    <option value="Dienstag">Dienstag</option>
-                    <option value="Mittwoch">Mittwoch</option>
-                    <option value="Donnerstag">Donnerstag</option>
-                    <option value="Freitag">Freitag</option>
-                    <option value="Samstag">Samstag</option>
-                    <option value="Sonntag">Sonntag</option>
-                </select>
-            </div>
         </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Maximale Entfernung</label>
-                    <input type="number" name="max_distance" class="form-control" min="0" max="9999999" placeholder="Geben Sie die maximale Entfernung ein">
-                </div>
-                <div class="form-group">
-                    <label>Budget</label>
-                    <input type="number" class="form-control" name="budget" placeholder="Geben Sie Ihr Budget ein">
-                </div>
-                <div class="form-group">
-                    <label>Spielart</label>
-                    <input type="text" class="form-control" name="spielart" placeholder="Geben Sie Ihre bevorzugte Spielart ein">
-                </div>
-                <div class="form-group">
-                    <label>Bevorzugtes Wetter</label>
-                    <input type="text" class="form-control" name="bevorzugtes_wetter" placeholder="Geben Sie Ihr bevorzugtes Wetter ein">
-                </div>
-                <input class="btn" type="submit" value="Submit">
-            </div>
-            <div class="col-md-4">
-                Entscheidung
-                <p>{{start}} {{ziel}} {{distance}}</p>
-            </div>
-
-        </div>
-</form>
+    </div>
 </div>
+
 <table class="table">
     <tr>
         <th>Name</th>
@@ -83,12 +93,6 @@
 </table>
 
 <div class="row">
-    <!--<form method="POST">
-        <input type="text" name="data" placeholder="Enter something">
-        <input type="submit" value="Submit">
-    </form>-->
-
-
     <div class="col-md-4">
         <h2>Getting started</h2>
         <p>

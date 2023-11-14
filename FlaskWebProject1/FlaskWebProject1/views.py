@@ -10,17 +10,35 @@ from flask import Flask, current_app
 from math import radians, sin, cos, sqrt, atan2
 from FlaskWebProject1.Classes.CSVFile import CSVFile
 from FlaskWebProject1.Classes.Verein import Verein
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn import neighbors
-from sklearn.metrics import accuracy_score
-from joblib import dump
+from flask import Flask, request, jsonify
 
 
+@app.route('/postjson', methods=['POST'])
+def post_json_handler():
+    content = request.get_json()
+    selected_start = content.get('select_start')
+    selected_ziel = content.get('select_ziel')
+    selected_wochentag = content.get('wochentag')
 
-# with open("C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\csv\\Vereins.csv", 'r') as file:
-#     csvreader = file.read().split(';')
-#     print(file.read())
+    max_distance = float(content.get('max_distance'))
+    budget = float(content.get('budget'))
+    bevorzugtes_wetter = content.get('bevorzugtes_wetter')
+
+    distance = calculate_distance(selected_start, selected_ziel)
+
+    # Add all the new and processed data to the original content
+    content.update({
+        'distance': distance,
+        'start': selected_start,
+        'ziel': selected_ziel,
+        'max_distance': max_distance,
+        'budget': budget,
+        'bevorzugtes_wetter': bevorzugtes_wetter,
+    })
+
+    # Return the modified content as JSON
+    return jsonify(content)
+
 csv_file_verein = CSVFile('C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\csv\\verein.csv')
 csv_file_cities = CSVFile('C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\csv\\cities_data.csv')
 vereinen = csv_file_verein.read_verein_from_csv()
@@ -30,7 +48,7 @@ cities = csv_file_cities.read_cities_from_csv()
 @app.route('/', methods = ['GET','POST'])
 def home():
     if request.method == 'POST':  #this block is only entered when the form is submitted
-          # Daten aus den Dropdown-Menüs
+        # Daten aus den Dropdown-Menüs
         selected_start = request.form['select_start']
         selected_ziel = request.form['select_ziel']
         selected_wochentag = request.form['wochentag']
@@ -38,7 +56,6 @@ def home():
         # Daten aus den Eingabefeldern
         max_distance = float(request.form['max_distance'])
         budget = float(request.form['budget'])
-        spielart = request.form['spielart']
         bevorzugtes_wetter = request.form['bevorzugtes_wetter']
         distance = calculate_distance(selected_start, selected_ziel)
        
@@ -50,7 +67,10 @@ def home():
         vereinen = vereinen,
         distance = distance,
         start = selected_start,
-        ziel = selected_ziel
+        ziel = selected_ziel,
+        max_distance = max_distance,
+        budget = budget,
+        bevorzugtes_wetter = bevorzugtes_wetter,
     )
     
     return render_template(
@@ -60,6 +80,8 @@ def home():
         cities = cities,
         vereinen = vereinen,
         )
+
+
 @app.route('/contact')
 def contact():
     """Renders the contact page."""
