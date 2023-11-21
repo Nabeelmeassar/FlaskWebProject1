@@ -150,39 +150,3 @@ def shortest_path(graph, start_vertex, target_vertex):
         target_vertex = predecessors[target_vertex]
     path = path[::-1]  # reverse the path
     return path
-
-
-
-
-# Genetic Algorithm
-def genetic_algorithm(attractions, population_size, generations, mutation_rate):
-    # Create the initial population
-    population = create_initial_population(attractions)
-
-    for generation in range(generations):
-        # Calculate the fitness of each route in the population
-        fitness = [1 / calculate_distance(route) for route in population]
-
-        # Select the top routes based on their fitness
-        num_top_routes = max(2, int(population_size * 0.2))
-        top_routes_indices = sorted(range(len(fitness)), key=lambda i: fitness[i], reverse=True)[:num_top_routes]
-        top_routes = [population[i] for i in top_routes_indices]
-
-        # Create the next generation through crossover and mutation
-        next_generation = top_routes
-
-        while len(next_generation) < population_size:
-            parent1, parent2 = random.sample(top_routes, 2)
-            child = simple_crossover(parent1, parent2)
-            if random.random() < mutation_rate:
-                mutate(child)
-            next_generation.append(child)
-
-        population = next_generation
-
-    # Find the best route in the final population
-    best_route_index = top_routes_indices[0]
-    best_route = population[best_route_index]
-
-
-
