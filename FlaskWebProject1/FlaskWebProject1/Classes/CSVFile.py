@@ -1,6 +1,7 @@
 import csv
 from FlaskWebProject1.Classes.Verein import Verein
 from FlaskWebProject1.Classes.city import City
+from FlaskWebProject1.Classes.stadion import Stadion
 
 class CSVFile:
     """description of class"""
@@ -45,4 +46,13 @@ class CSVFile:
                 city = City(name, lat, lon,country, population)
                 cities.append(city)
             # cities.append(city)
-        return cities
+        return cities    
+    def read_clubs_from_csv(self):
+        stadienen = []
+        with open(self.file_path, 'r', encoding='utf-8-sig') as file:
+               reader = csv.reader(file, delimiter=',')
+               for row in reader:
+                stadion = Stadion(int(row[0]), row[1], row[2], row[3], float(row[4]), float(row[5]), row[6], row[7], row[8], row[9], row[10].split(";"))                
+                stadienen.append(stadion)
+        return stadienen    
+        

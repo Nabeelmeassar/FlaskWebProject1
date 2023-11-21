@@ -5,7 +5,6 @@
     <div class="panel-heading">Bundesliga</div>
     <div class="panel-body">
         <div class="col-md-12">
-       
             <div class="row">
                 <form id="myForm">
                     <div class="col-md-4">
@@ -13,8 +12,8 @@
                             <!--<label>Start</label>-->
                             <select class="form-select select_sy" required id="select_start" name="select_start">
                                 <option disabled selected>Start von</option>
-                                {% for city in cities %}
-                                <option value="{{city['lat'], city['lon']}}">{{city['name']}} {{city['country']}}</option>
+                                {% for club in clubs %}
+                                <option value="{{club.id}}">{{club.id}} {{club.verein}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -23,29 +22,9 @@
                             <!--<label>Bevorzugtes Team</label>-->
                             <select class="form-select select_sy" required id="select_ziel" name="select_ziel">
                                 <option disabled selected>Bevorzugtes Team</option>
-                                {% for verein in vereinen %}
-                                <option value="{{verein['lat'], verein['lon']}}">{{verein['name']}}</option>
+                                {% for club in clubs %}
+                                <option value="{{club.id}}">{{club.id}} {{club.verein}}</option>
                                 {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <!--<label>Bevorzugten Tag</label>-->
-                            <select class="form-select select_sy" id="wochentag" required name="wochentag">
-                                <option disabled selected>Bevorzugten Tag</option>
-                                <option value="Montag">Montag</option>
-                                <option value="Dienstag">Dienstag</option>
-                                <option value="Mittwoch">Mittwoch</option>
-                                <option value="Donnerstag">Donnerstag</option>
-                                <option value="Freitag">Freitag</option>
-                                <option value="Samstag">Samstag</option>
-                                <option value="Sonntag">Sonntag</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <select class="form-select select_sy" id="bevorzugtes_wetter" required name="bevorzugtes_wetter">
-                                <option disabled selected>Bevorzugtes Wetter</option>
-                                <option value="sunny">sonnig</option>
-                                <option value="cloudy">Bewoelkt</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -64,32 +43,33 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <button type="button" onclick="sendFormData()">Send Form Data</button>                    </div>
+                        <button class="btn btn-primary" type="button" onclick="sendFormData()">Send Form Data</button>
+                    </div>
                 </form>
                 <div class="col-md-4 alert alert-info not_show" id="entscheidung_content">
-              
+                </div>
+                <div class="col-md-4">
+                    <img src="../static/imags/bundesliga_baum.png" width="450" />
                 </div>
             </div>
-
-        </div>
     </div>
 </div>
 
 <table class="table">
     <tr>
-        <th>Name</th>
-        <th>Lat</th>
-        <th>Lon</th>
+        <th>verein</th>
+        <th>distance</th>
     </tr>
-    {% for verein in vereinen %}
+    {% for club in clubs %}
     <tr>
-        <td>{{verein['name']}}</td>
-        <td>{{verein['lat']}}</td>
-        <td>{{verein['lon']}}</td>
+        <td>{{club.verein}}</td>
+        <td>
+            {% for distance in club.distances %}
+            <p>{{distance.other.verein}} = {{distance.distance_in_km}} Km</p>
+            {% endfor %}
+        </td>
     </tr>
-
     {% endfor %}
-
 </table>
 
 <div class="row">

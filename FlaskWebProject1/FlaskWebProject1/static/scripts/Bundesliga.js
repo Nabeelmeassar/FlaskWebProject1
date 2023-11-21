@@ -12,12 +12,12 @@ function sendFormData() {
 
             // Here you can process the data and use it in your application
             var processedData = {
-                'distance': jsonArray.distance,
                 'start': jsonArray.select_start,
                 'ziel': jsonArray.select_ziel,
                 'max_distance': jsonArray.max_distance,
                 'budget': jsonArray.budget,
-                'bevorzugtes_wetter': jsonArray.bevorzugtes_wetter
+                'shortest_distance_km': jsonArray.shortest_distance_km,
+                'shortest_path': jsonArray.shortest_path,
             };
 
             console.log(processedData); // Output the processed data to the console

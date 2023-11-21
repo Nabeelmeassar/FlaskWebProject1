@@ -31,6 +31,12 @@
     <Compile Include="FlaskWebProject1\Classes\city.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FlaskWebProject1\Classes\Distance.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FlaskWebProject1\Classes\stadion.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FlaskWebProject1\Classes\Verein.py">
       <SubType>Code</SubType>
     </Compile>
@@ -43,9 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FlaskWebProject1\" />
-    <Folder Include="FlaskWebProject1\csv\" />
+    <Folder Include="FlaskWebProject1\static\csv\" />
     <Folder Include="FlaskWebProject1\Classes\" />
-    <Folder Include="FlaskWebProject1\imags\" />
+    <Folder Include="FlaskWebProject1\static\imags\" />
     <Folder Include="FlaskWebProject1\static\" />
     <Folder Include="FlaskWebProject1\static\content\" />
     <Folder Include="FlaskWebProject1\static\fonts\" />
@@ -53,10 +59,12 @@
     <Folder Include="FlaskWebProject1\templates\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FlaskWebProject1\csv\verein.csv" />
-    <Content Include="FlaskWebProject1\csv\cities_data.csv" />
-    <Content Include="FlaskWebProject1\imags\OIG %282%29.jpg" />
-    <Content Include="FlaskWebProject1\imags\_1387290c-68f3-4e68-84e2-7a9775d9795b.jpg" />
+    <Content Include="FlaskWebProject1\static\csv\clubs.csv" />
+    <Content Include="FlaskWebProject1\static\csv\verein.csv" />
+    <Content Include="FlaskWebProject1\static\csv\cities_data.csv" />
+    <Content Include="FlaskWebProject1\static\imags\bundesliga_baum.png" />
+    <Content Include="FlaskWebProject1\static\imags\OIG %282%29.jpg" />
+    <Content Include="FlaskWebProject1\static\imags\_1387290c-68f3-4e68-84e2-7a9775d9795b.jpg" />
     <Content Include="FlaskWebProject1\static\scripts\Bundesliga.js" />
     <Content Include="requirements.txt" />
     <Content Include="FlaskWebProject1\static\content\bootstrap.css" />
