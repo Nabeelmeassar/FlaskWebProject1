@@ -12,12 +12,12 @@ function sendFormData() {
 
             // Here you can process the data and use it in your application
             var processedData = {
-                'start': jsonArray.select_start,
-                'ziel': jsonArray.select_ziel,
-                'max_distance': jsonArray.max_distance,
+                'Startstadt': jsonArray.start,
+                'Zielstadt': jsonArray.ziel,
+                'Max Entfernung ': jsonArray.max_distance + ' Km',
                 'budget': jsonArray.budget,
-                'shortest_distance_km': jsonArray.shortest_distance_km,
-                'shortest_path': jsonArray.shortest_path,
+                'Kuerzeste Entfernung in km': jsonArray.Kuerzeste_Entfernung_km + ' Km',
+                'Kuerzester Weg': jsonArray.Kuerzester_Weg,
             };
 
             console.log(processedData); // Output the processed data to the console
@@ -25,8 +25,11 @@ function sendFormData() {
             // Convert 'processedData' to a string and set it as the innerHTML of the element with the ID 'entscheidung_content'
             // Get the element with the ID 'entscheidung_content'
             var entscheidungContentElement = document.getElementById('entscheidung_content');
+            var mymap = document.getElementById('mapdiv');
+
             entscheidungContentElement.style.visibility = 'visible';
             entscheidungContentElement.innerHTML = '';
+            mymap.innerHTML = jsonArray.m_html;
             // Go through all properties in 'processedData'
             Object.keys(processedData).forEach(function (key) {
                 // Create a new <p> element

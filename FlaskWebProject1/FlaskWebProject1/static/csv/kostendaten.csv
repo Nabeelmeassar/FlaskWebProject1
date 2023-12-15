@@ -1,0 +1,19 @@
+﻿ID,Stadt,Verein,Stehplatz,Günstigster Sitzplatz,Durchschnittlicher Sitzplatz,Teuerster Sitzplatz,VIP-Ticket,Günstigstes Hotel,Standard Hotel,Luxushotel
+1,Berlin,1. FC Union Berlin,15,30,45,60,120,50,100,200
+2,Bremen,SV Werder Bremen,18,35,50,65,130,60,110,220
+3,Wolfsburg,VfL Wolfsburg,20,25,40,55,110,55,105,210
+4,Leipzig,RB Leipzig,22,28,45,70,140,65,115,230
+5,Bochum,VfL Bochum,16,20,35,50,100,50,90,180
+6,Mönchengladbach,Borussia Mönchengladbach,20,32,48,64,128,70,120,240
+7,Leverkusen,Bayer 04 Leverkusen,19,31,47,63,125,60,110,220
+8,Dortmund,Borussia Dortmund,25,40,55,75,150,65,115,230
+9,Köln,1. FC Köln,18,33,49,66,132,70,125,250
+10,Frankfurt,Eintracht Frankfurt,20,36,52,68,136,75,130,260
+11,Mainz,1. FSV Mainz 05,17,29,44,59,118,55,95,190
+12,Darmstadt,SV Darmstadt 98,15,27,42,57,114,50,85,170
+13,Sinsheim,TSG Hoffenheim,19,30,46,62,124,60,100,200
+14,Stuttgart,VfB Stuttgart,21,34,51,68,136,65,110,220
+15,Freiburg,SC Freiburg,16,26,41,56,112,55,90,180
+16,Heidenheim,1. FC Heidenheim,14,24,38,52,104,45,80,160
+17,Augsburg,FC Augsburg,17,29,44,59,118,60,100,200
+18,München,FC Bayern München,30,50,70,90,180,80,150,300

@@ -47,5 +47,9 @@ input[type="checkbox"].input-validation-error {
     visibility: hidden;
 }
 body {
-    /*background-image: url('../imags/bundesliga.jpg');*/
+    background-image: url('../imags/OIG_09_12.jpeg');
+    background-size: cover; /* Bild deckt verfügbaren Raum ab */
+    background-position: center; /* Zentriert das Bild */
+    background-repeat: no-repeat; /* Keine Wiederholung des Bildes */
+    height: 100vh; /* Setzt die Höhe des Elements auf die Höhe des Viewports */
 }

@@ -1,0 +1,172 @@
+﻿ID,Stadt,Spieltag,Datum,Heimmannschaft,Gastmannschaft
+2,Bremen,1,18.08.2023,SV Werder Bremen,FC Bayern München 
+3,Wolfsburg,1,19.08.2023,VfL Wolfsburg,1. FC Heidenheim 1846
+7,Leverkusen,1,19.08.2023,Bayer 04 Leverkusen,RB Leipzig 
+13,Sinsheim,1,19.08.2023,TSG Hoffenheim,SC Freiburg 
+14,Stuttgart,1,19.08.2023,VfB Stuttgart,VfL Bochum
+17,Augsburg,1,19.08.2023,FC Augsburg,Borussia Mönchengladbach
+8,Dortmund,1,19.08.2023,Borussia Dortmund,1. FC Köln
+1,Berlin,1,20.08.2023,1. FC Union Berlin,1. FSV Mainz 05
+10,Frankfurt,1,20.08.2023,Eintracht Frankfurt,SV Darmstadt 98
+4,Leipzig,2,25.08.2023,RB Leipzig,VfB Stuttgart
+5,Bochum,2,26.08.2023,VfL Bochum,Borussia Dortmund
+9,Köln,2,26.08.2023,1. FC Köln,VfL Wolfsburg
+12,Darmstadt,2,26.08.2023,SV Darmstadt 98,1. FC Union Berlin
+15,Freiburg,2,26.08.2023,SC Freiburg,SV Werder Bremen
+16,Heidenheim,2,26.08.2023,1. FC Heidenheim,TSG Hoffenheim
+6,Mönchengladbach,2,26.08.2023,Borussia Mönchengladbach,Bayer 04 Leverkusen
+11,Mainz,2,27.08.2023,1. FSV Mainz 05,Eintracht Frankfurt
+18,München,2,27.08.2023,FC Bayern München ,FC Augsburg
+8,Dortmund,3,01.09.2023,Borussia Dortmund,1. FC Heidenheim 1846
+2,Bremen,3,02.09.2023,SV Werder Bremen,1. FSV Mainz 05
+7,Leverkusen,3,02.09.2023,Bayer 04 Leverkusen,SV Darmstadt 98
+13,Sinsheim,3,02.09.2023,TSG Hoffenheim,VfL Wolfsburg
+14,Stuttgart,3,02.09.2023,VfB Stuttgart,SC Freiburg 
+17,Augsburg,3,02.09.2023,FC Augsburg,VfL Bochum
+6,Mönchengladbach,3,02.09.2023,Borussia Mönchengladbach,FC Bayern München 
+10,Frankfurt,3,03.09.2023,Eintracht Frankfurt,1. FC Köln
+1,Berlin,3,03.09.2023,1. FC Union Berlin,RB Leipzig 
+18,München,4,15.09.2023,FC Bayern München ,Bayer 04 Leverkusen
+3,Wolfsburg,4,16.09.2023,VfL Wolfsburg,1. FC Union Berlin
+4,Leipzig,4,16.09.2023,RB Leipzig,FC Augsburg
+9,Köln,4,16.09.2023,1. FC Köln,TSG Hoffenheim
+11,Mainz,4,16.09.2023,1. FSV Mainz 05,VfB Stuttgart
+15,Freiburg,4,16.09.2023,SC Freiburg,Borussia Dortmund
+5,Bochum,4,16.09.2023,VfL Bochum,Eintracht Frankfurt
+16,Heidenheim,4,17.09.2023,1. FC Heidenheim,SV Werder Bremen
+12,Darmstadt,4,17.09.2023,SV Darmstadt 98,Borussia Mönchengladbach
+14,Stuttgart,5,22.09.2023,VfB Stuttgart,SV Darmstadt 98
+1,Berlin,5,23.09.2023,1. FC Union Berlin,TSG Hoffenheim
+6,Mönchengladbach,5,23.09.2023,Borussia Mönchengladbach,RB Leipzig 
+8,Dortmund,5,23.09.2023,Borussia Dortmund,VfL Wolfsburg
+17,Augsburg,5,23.09.2023,FC Augsburg,1. FSV Mainz 05
+18,München,5,23.09.2023,FC Bayern München ,VfL Bochum
+2,Bremen,5,23.09.2023,SV Werder Bremen,1. FC Köln
+7,Leverkusen,5,24.09.2023,Bayer 04 Leverkusen,1. FC Heidenheim 1846
+10,Frankfurt,5,24.09.2023,Eintracht Frankfurt,SC Freiburg 
+13,Sinsheim,6,29.09.2023,TSG Hoffenheim,Borussia Dortmund
+3,Wolfsburg,6,30.09.2023,VfL Wolfsburg,Eintracht Frankfurt
+5,Bochum,6,30.09.2023,VfL Bochum,Borussia Mönchengladbach
+9,Köln,6,30.09.2023,1. FC Köln,VfB Stuttgart
+11,Mainz,6,30.09.2023,1. FSV Mainz 05,Bayer 04 Leverkusen
+16,Heidenheim,6,30.09.2023,1. FC Heidenheim,1. FC Union Berlin
+4,Leipzig,6,30.09.2023,RB Leipzig,FC Bayern München 
+12,Darmstadt,6,01.10.2023,SV Darmstadt 98,SV Werder Bremen
+15,Freiburg,6,01.10.2023,SC Freiburg,FC Augsburg
+6,Mönchengladbach,7,06.10.2023,Borussia Mönchengladbach,1. FSV Mainz 05
+4,Leipzig,7,07.10.2023,RB Leipzig,VfL Bochum
+8,Dortmund,7,07.10.2023,Borussia Dortmund,1. FC Union Berlin
+14,Stuttgart,7,07.10.2023,VfB Stuttgart,VfL Wolfsburg
+17,Augsburg,7,07.10.2023,FC Augsburg,SV Darmstadt 98
+2,Bremen,7,07.10.2023,SV Werder Bremen,TSG Hoffenheim
+7,Leverkusen,7,08.10.2023,Bayer 04 Leverkusen,1. FC Köln
+18,München,7,08.10.2023,FC Bayern München ,SC Freiburg 
+10,Frankfurt,7,08.10.2023,Eintracht Frankfurt,1. FC Heidenheim 1846
+8,Dortmund,8,20.10.2023,Borussia Dortmund,SV Werder Bremen
+1,Berlin,8,21.10.2023,1. FC Union Berlin,VfB Stuttgart
+3,Wolfsburg,8,21.10.2023,VfL Wolfsburg,Bayer 04 Leverkusen
+12,Darmstadt,8,21.10.2023,SV Darmstadt 98,RB Leipzig 
+13,Sinsheim,8,21.10.2023,TSG Hoffenheim,Eintracht Frankfurt
+15,Freiburg,8,21.10.2023,SC Freiburg,VfL Bochum
+11,Mainz,8,21.10.2023,1. FSV Mainz 05,FC Bayern München 
+9,Köln,8,22.10.2023,1. FC Köln,Borussia Mönchengladbach
+16,Heidenheim,8,22.10.2023,1. FC Heidenheim,FC Augsburg
+5,Bochum,9,27.10.2023,VfL Bochum,1. FSV Mainz 05
+2,Bremen,9,28.10.2023,SV Werder Bremen,1. FC Union Berlin
+6,Mönchengladbach,9,28.10.2023,Borussia Mönchengladbach,1. FC Heidenheim 1846
+14,Stuttgart,9,28.10.2023,VfB Stuttgart,TSG Hoffenheim
+17,Augsburg,9,28.10.2023,FC Augsburg,VfL Wolfsburg
+18,München,9,28.10.2023,FC Bayern München ,SV Darmstadt 98
+4,Leipzig,9,28.10.2023,RB Leipzig,1. FC Köln
+10,Frankfurt,9,29.10.2023,Eintracht Frankfurt,Borussia Dortmund
+7,Leverkusen,9,29.10.2023,Bayer 04 Leverkusen,SC Freiburg 
+12,Darmstadt,10,03.11.2023,SV Darmstadt 98,VfL Bochum
+1,Berlin,10,04.11.2023,1. FC Union Berlin,Eintracht Frankfurt
+9,Köln,10,04.11.2023,1. FC Köln,FC Augsburg
+11,Mainz,10,04.11.2023,1. FSV Mainz 05,RB Leipzig 
+13,Sinsheim,10,04.11.2023,TSG Hoffenheim,Bayer 04 Leverkusen
+15,Freiburg,10,04.11.2023,SC Freiburg,Borussia Mönchengladbach
+8,Dortmund,10,04.11.2023,Borussia Dortmund,FC Bayern München 
+3,Wolfsburg,10,05.11.2023,VfL Wolfsburg,SV Werder Bremen
+16,Heidenheim,10,05.11.2023,1. FC Heidenheim,VfB Stuttgart
+6,Mönchengladbach,11,10.11.2023,Borussia Mönchengladbach,VfL Wolfsburg
+12,Darmstadt,11,11.11.2023,SV Darmstadt 98,1. FSV Mainz 05
+14,Stuttgart,11,11.11.2023,VfB Stuttgart,Borussia Dortmund
+17,Augsburg,11,11.11.2023,FC Augsburg,TSG Hoffenheim
+18,München,11,11.11.2023,FC Bayern München ,1. FC Heidenheim 1846
+5,Bochum,11,11.11.2023,VfL Bochum,1. FC Köln
+7,Leverkusen,11,12.11.2023,Bayer 04 Leverkusen,1. FC Union Berlin
+2,Bremen,11,12.11.2023,SV Werder Bremen,Eintracht Frankfurt
+4,Leipzig,11,12.11.2023,RB Leipzig,SC Freiburg 
+9,Köln,12,24.11.2023,1. FC Köln,FC Bayern München 
+1,Berlin,12,25.11.2023,1. FC Union Berlin,FC Augsburg
+2,Bremen,12,25.11.2023,SV Werder Bremen,Bayer 04 Leverkusen
+3,Wolfsburg,12,25.11.2023,VfL Wolfsburg,RB Leipzig 
+8,Dortmund,12,25.11.2023,Borussia Dortmund,Borussia Mönchengladbach
+15,Freiburg,12,25.11.2023,SC Freiburg,SV Darmstadt 98
+10,Frankfurt,12,25.11.2023,Eintracht Frankfurt,VfB Stuttgart
+16,Heidenheim,12,26.11.2023,1. FC Heidenheim,VfL Bochum
+13,Sinsheim,12,26.11.2023,TSG Hoffenheim,1. FSV Mainz 05
+12,Darmstadt,13,01.12.2023,SV Darmstadt 98,1. FC Köln
+4,Leipzig,13,02.12.2023,RB Leipzig,1. FC Heidenheim 1846
+5,Bochum,13,02.12.2023,VfL Bochum,VfL Wolfsburg
+6,Mönchengladbach,13,02.12.2023,Borussia Mönchengladbach,TSG Hoffenheim
+14,Stuttgart,13,02.12.2023,VfB Stuttgart,SV Werder Bremen
+11,Mainz,13,03.12.2023,1. FSV Mainz 05,SC Freiburg 
+7,Leverkusen,13,03.12.2023,Bayer 04 Leverkusen,Borussia Dortmund
+17,Augsburg,13,03.12.2023,FC Augsburg,Eintracht Frankfurt
+13,Sinsheim,14,08.12.2023,TSG Hoffenheim,VfL Bochum
+1,Berlin,14,09.12.2023,1. FC Union Berlin,Borussia Mönchengladbach
+2,Bremen,14,09.12.2023,SV Werder Bremen,FC Augsburg
+3,Wolfsburg,14,09.12.2023,VfL Wolfsburg,SC Freiburg 
+10,Frankfurt,14,09.12.2023,Eintracht Frankfurt,FC Bayern München 
+16,Heidenheim,14,09.12.2023,1. FC Heidenheim,SV Darmstadt 98
+8,Dortmund,14,09.12.2023,Borussia Dortmund,RB Leipzig 
+14,Stuttgart,14,10.12.2023,VfB Stuttgart,Bayer 04 Leverkusen
+9,Köln,14,10.12.2023,1. FC Köln,1. FSV Mainz 05
+6,Mönchengladbach,15,15.12.2023,Borussia Mönchengladbach,SV Werder Bremen
+5,Bochum,15,16.12.2023,VfL Bochum,1. FC Union Berlin
+11,Mainz,15,16.12.2023,1. FSV Mainz 05,1. FC Heidenheim 1846
+12,Darmstadt,15,16.12.2023,SV Darmstadt 98,VfL Wolfsburg
+17,Augsburg,15,16.12.2023,FC Augsburg,Borussia Dortmund
+4,Leipzig,15,16.12.2023,RB Leipzig,TSG Hoffenheim
+15,Freiburg,15,17.12.2023,SC Freiburg,1. FC Köln
+7,Leverkusen,15,17.12.2023,Bayer 04 Leverkusen,Eintracht Frankfurt
+18,München,15,17.12.2023,FC Bayern München ,VfB Stuttgart
+2,Bremen,16,19.12.2023,SV Werder Bremen,RB Leipzig 
+8,Dortmund,16,19.12.2023,Borussia Dortmund,1. FSV Mainz 05
+13,Sinsheim,16,19.12.2023,TSG Hoffenheim,SV Darmstadt 98
+1,Berlin,16,20.12.2023,1. FC Union Berlin,1. FC Köln
+3,Wolfsburg,16,20.12.2023,VfL Wolfsburg,FC Bayern München 
+7,Leverkusen,16,20.12.2023,Bayer 04 Leverkusen,VfL Bochum
+10,Frankfurt,16,20.12.2023,Eintracht Frankfurt,Borussia Mönchengladbach
+14,Stuttgart,16,20.12.2023,VfB Stuttgart,FC Augsburg
+16,Heidenheim,16,20.12.2023,1. FC Heidenheim,SC Freiburg 
+18,München,17,12.01.2024,FC Bayern München ,TSG Hoffenheim
+4,Leipzig,17,13.01.2024,RB Leipzig,Eintracht Frankfurt
+9,Köln,17,13.01.2024,1. FC Köln,1. FC Heidenheim 1846
+11,Mainz,17,13.01.2024,1. FSV Mainz 05,VfL Wolfsburg
+15,Freiburg,17,13.01.2024,SC Freiburg,1. FC Union Berlin
+17,Augsburg,17,13.01.2024,FC Augsburg,Bayer 04 Leverkusen
+12,Darmstadt,17,13.01.2024,SV Darmstadt 98,Borussia Dortmund
+5,Bochum,17,14.01.2024,VfL Bochum,SV Werder Bremen
+6,Mönchengladbach,17,14.01.2024,Borussia Mönchengladbach,VfB Stuttgart
+11,Mainz,18,19.01.2024,1. FSV Mainz 05,1. FC Union Berlin
+5,Bochum,18,20.01.2024,VfL Bochum,VfB Stuttgart
+9,Köln,18,20.01.2024,1. FC Köln,Borussia Dortmund
+12,Darmstadt,18,20.01.2024,SV Darmstadt 98,Eintracht Frankfurt
+15,Freiburg,18,20.01.2024,SC Freiburg,TSG Hoffenheim
+16,Heidenheim,18,20.01.2024,1. FC Heidenheim,VfL Wolfsburg
+4,Leipzig,18,20.01.2024,RB Leipzig,Bayer 04 Leverkusen
+18,München,18,21.01.2024,FC Bayern München ,SV Werder Bremen
+6,Mönchengladbach,18,21.01.2024,Borussia Mönchengladbach,FC Augsburg
+18,München,13,24.01.2024,FC Bayern München ,1. FC Union Berlin
+1,Berlin,34,18.05.2024,1. FC Union Berlin,SC Freiburg 
+2,Bremen,34,18.05.2024,SV Werder Bremen,VfL Bochum
+3,Wolfsburg,34,18.05.2024,VfL Wolfsburg,1. FSV Mainz 05
+7,Leverkusen,34,18.05.2024,Bayer 04 Leverkusen,FC Augsburg
+8,Dortmund,34,18.05.2024,Borussia Dortmund,SV Darmstadt 98
+10,Frankfurt,34,18.05.2024,Eintracht Frankfurt,RB Leipzig 
+13,Sinsheim,34,18.05.2024,TSG Hoffenheim,FC Bayern München 
+14,Stuttgart,34,18.05.2024,VfB Stuttgart,Borussia Mönchengladbach
+16,Heidenheim,34,18.05.2024,1. FC Heidenheim,1. FC Köln

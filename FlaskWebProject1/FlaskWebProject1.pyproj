@@ -34,6 +34,9 @@
     <Compile Include="FlaskWebProject1\Classes\Distance.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FlaskWebProject1\Classes\Map.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FlaskWebProject1\Classes\stadion.py">
       <SubType>Code</SubType>
     </Compile>
@@ -60,11 +63,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FlaskWebProject1\static\csv\clubs.csv" />
+    <Content Include="FlaskWebProject1\static\csv\spielplan.csv" />
+    <Content Include="FlaskWebProject1\static\csv\kostendaten.csv" />
+    <Content Include="FlaskWebProject1\static\csv\gesamtroute.csv" />
+    <Content Include="FlaskWebProject1\static\csv\data.csv" />
     <Content Include="FlaskWebProject1\static\csv\verein.csv" />
     <Content Include="FlaskWebProject1\static\csv\cities_data.csv" />
     <Content Include="FlaskWebProject1\static\imags\bundesliga_baum.png" />
     <Content Include="FlaskWebProject1\static\imags\OIG %282%29.jpg" />
+    <Content Include="FlaskWebProject1\static\imags\OIG_09_12.jpeg" />
     <Content Include="FlaskWebProject1\static\imags\_1387290c-68f3-4e68-84e2-7a9775d9795b.jpg" />
+    <Content Include="FlaskWebProject1\static\imags\_5f0f9124-bf38-4906-a54a-b36fbec80a98.jpeg" />
+    <Content Include="FlaskWebProject1\static\scripts\2_hoch.geo.json" />
     <Content Include="FlaskWebProject1\static\scripts\Bundesliga.js" />
     <Content Include="requirements.txt" />
     <Content Include="FlaskWebProject1\static\content\bootstrap.css" />

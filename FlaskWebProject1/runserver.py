@@ -6,7 +6,6 @@ from os import environ
 from FlaskWebProject1 import app
 import csv
 import json
-
 if __name__ == '__main__':
     HOST = environ.get('SERVER_HOST', 'localhost')
     try:
