@@ -3,15 +3,17 @@ from math import radians, cos, sin, asin, sqrt
 from FlaskWebProject1.Classes.distance import Distance
 
 class Stadion:
-    def __init__(self, id, stadt, verein, stadion, lat, long, ticketkosten, fussball_qualitaet, stadt_qualitaet, stadion_stimmung, nachbarn_ids, nachbarns=None, distance = None):
+    def __init__():
+        pass
+    def __init__(self, id, stadt, verein, stadion, lat, long, hotelkosten, ticketkosten, stadt_qualitaet, stadion_stimmung, nachbarn_ids, nachbarns=None, distance = None):
         self.id = id
         self.stadt = stadt
         self.verein = verein
         self.stadion = stadion
         self.lat = float(lat)
         self.long = float(long)
+        self.hotelkosten = hotelkosten
         self.ticketkosten = ticketkosten
-        self.fussball_qualitaet = fussball_qualitaet
         self.stadt_qualitaet = stadt_qualitaet
         self.stadion_stimmung = stadion_stimmung
         self.nachbarn_ids = nachbarn_ids.split(';') if isinstance(nachbarn_ids, str) else nachbarn_ids        

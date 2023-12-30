@@ -1,18 +1,18 @@
-﻿1,Berlin,1. FC Union Berlin,Stadion An der Alten Försterei,52.463292, 13.568284,,6,9,,2;3;4
-2,Bremen,SV Werder Bremen,Wohninvest Weserstadion,53.066267, 8.837267,,4,6,,1;3;5;6;8
-3,Wolfsburg,VfL Wolfsburg,Volkswagen Arena,52.432156, 10.803661,,7,4,,1;2;4;8
-4,Leipzig,RB Leipzig,Red Bull Arena,51.345180, 12.348202,,8,7,,1;3;8;10;16;18
-5,Bochum,VfL Bochum,Vonovia Ruhrstadion,51.484391, 7.216236,,3,5,,2;6;7;8;9
-6,Mönchengladbach,Borussia Mönchengladbach,Borussia-Park,51.174705, 6.385204,,6,6,,2;5;7;8;9
-7,Leverkusen,Bayer 04 Leverkusen,BayArena,51.038567, 7.002417,,8,5,,5;6;8;9;10
-8,Dortmund,Borussia Dortmund,Signal Iduna Park,51.492569, 7.451842,,9,6,,2;3;4;5;6;7
-9,Köln,1. FC Köln,RheinEnergie Stadion,50.933300, 6.875280,,4,9,,5;6;7;10;11
-10,Frankfurt,Eintracht Frankfurt,Deutsche Bank Park,50.068580, 8.645472,,7,8,,4;7;8;9;11;12
-11,Mainz,1. FSV Mainz 05,MEWA Arena,49.984186, 8.224210,,4,7,,9;10;12
-12,Darmstadt,SV Darmstadt 98,Merck-Stadion am Böllenfalltor,49.872825, 8.650207,,2,7,,10;11;13;15;18
-13,Sinsheim,TSG Hoffenheim,PreZero Arena,49.235395, 8.888694,,6,5,,12;14;15;16
-14,Stuttgart,VfB Stuttgart,MHP Arena,48.792269, 9.232031,,5,8,,13;15;16
-15,Freiburg,SC Freiburg,Europa-Park Stadion,47.995351, 7.791694,,7,8,,12;13;14;17
-16,Heidenheim,1. FC Heidenheim,Voith-Arena,48.689352, 10.151282,,1,6,,4;13;14;17
-17,Augsburg,FC Augsburg,WWK Arena,48.322125, 10.891255,,3,7,,15;16;18
-18,München,FC Bayern München,Allianz Arena,48.218799, 11.624707,,10,10,,4;12;17
+﻿1,Berlin,1. FC Union Berlin,Stadion An der Alten Försterei,52.463292,13.568284,,6,9,,2;3;4
+2,Bremen,SV Werder Bremen,Wohninvest Weserstadion,53.066267,8.837267,88,17,6,,1;3;5;6;8
+3,Wolfsburg,VfL Wolfsburg,Volkswagen Arena,52.432156,10.803661,89,15,4,,1;2;4;8
+4,Leipzig,RB Leipzig,Red Bull Arena,51.345180,12.348202,65,16,7,,1;3;8;10;16;18
+5,Bochum,VfL Bochum,Vonovia Ruhrstadion,51.484391,7.216236,55,12,5,,2;6;7;8;9
+6,Mönchengladbach,Borussia Mönchengladbach,Borussia-Park,51.174705,6.385204,81,20,6,,2;5;7;8;9
+7,Leverkusen,Bayer 04 Leverkusen,BayArena,51.038567,7.002417,68,15,5,,5;6;8;9;10
+8,Dortmund,Borussia Dortmund,Signal Iduna Park,51.492569,7.451842,78,25,6,,2;3;4;5;6;7
+9,Köln,1. FC Köln,RheinEnergie Stadion,50.933300,6.875280,101,25,9,,5;6;7;10;11
+10,Frankfurt,Eintracht Frankfurt,Deutsche Bank Park,50.068580,8.645472,130,28,8,,4;7;8;9;11;12
+11,Mainz,1. FSV Mainz 05,MEWA Arena,49.984186,8.224210,73,17,7,,9;10;12
+12,Darmstadt,SV Darmstadt 98,Merck-Stadion am Böllenfalltor,49.872825,8.650207,52,12,7,,10;11;13;15;18
+13,Hoffenheim,TSG Hoffenheim,PreZero Arena,49.235395,8.888694,39,10,5,,12;14;15;16
+14,Stuttgart,VfB Stuttgart,MHP Arena,48.792269,9.232031,103,24,8,,13;15;16
+15,Freiburg,SC Freiburg,Europa-Park Stadion,47.995351,7.791694,102,30,8,,12;13;14;17
+16,Heidenheim,1. FC Heidenheim,Voith-Arena,48.689352,10.151282,50,12,6,,4;13;14;17
+17,Augsburg,FC Augsburg,WWK Arena,48.322125,10.891255,63,14,7,,15;16;18
+18,München,FC Bayern München,Allianz Arena,48.218799,11.624707,145,40,10,,4;12;17

@@ -57,3 +57,79 @@ function sendFormData() {
 
     xhr.send(JSON.stringify(data));
 }
+function sendPreferenceFormData() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("POST", '/post_preference_json', true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    var entscheidungContentElement = document.getElementById('entscheidung_content');
+    var mymap = document.getElementById('mapdiv');
+    entscheidungContentElement.style.visibility = 'visible';
+    entscheidungContentElement.innerHTML = '';
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+            var cityRatings = jsonResponse.city_with_rating;
+            mymap.innerHTML = jsonResponse.m_html; // Assuming 'mymap' is a valid DOM element.
+
+            // Convert object to an array of [city, rating] pairs
+            var ratingsArray = [];
+            for (var city in cityRatings) {
+                if (cityRatings.hasOwnProperty(city)) {
+                    ratingsArray.push([city, cityRatings[city].rating]); // Assuming each city object has a 'rating'
+                }
+            }
+
+            // Sort the array by rating in descending order (highest rating first)
+            ratingsArray.sort(function (a, b) {
+                return b[1] - a[1];
+            });
+
+            // Start building the HTML string for a table
+            var htmlContent = '<table border="1" class="table">'; // Add border for visibility
+
+            // Add table headers
+            htmlContent += '<tr><th>Plaz</th><th>ID</th><th>Stadt</th><th>Bewertung</th><th>GPS</th></tr>';
+
+            // Loop through the sorted array and add rows to the table
+            for (let i = 0; i < ratingsArray.length; i++) {
+                var city = ratingsArray[i][0];
+                var cityData = cityRatings[city]; // Access the city data
+                htmlContent += '<tr>';
+                htmlContent += '<td>' + (i + 1) + '</td>'; // Count, i starts from 0, hence (i + 1).
+                htmlContent += '<td>' + cityData.ID + '</td>'; // City ID
+                htmlContent += '<td>' + city + '</td>'; // City Name
+                htmlContent += '<td>' + cityData.rating + '</td>'; // Rating
+                htmlContent += '<td>' + cityData.club_coordinate+ '</td>'; // GPS Coordinates, changed 'club_coordinate' to 'gps'
+                htmlContent += '</tr>';
+                console.log(cityData);
+            }
+
+            // Close the table tag
+            htmlContent += '</table>';
+
+            // Assuming 'entscheidungContentElement' is a valid DOM element.
+            entscheidungContentElement.innerHTML = htmlContent;
+        }
+    };
+
+    // Get the form element by its ID
+    var formElement = document.getElementById('preferenceForm');
+    var formData = new FormData(formElement);
+
+    // Construct the data object with the form values
+    var data = {
+        'Person_Budget': formData.get('Person_Budget'),
+        'Select_start': formData.get('select_start'),
+        'Tage': formData.get('tage'),
+        //'Person_Max_Distanz': formData.get('Person_Max_Distanz'),
+        'Person_Entertainment_Fussballfan': formData.get('Person_Entertainment_Fussballfan'),
+        'Person_Traditionsfussballfan': formData.get('Person_Traditionsfussballfan'),
+        'Person_Schnaeppchenjaeger': formData.get('Person_Schnaeppchenjaeger'),
+        'Partygaenger': formData.get('Partygaenger')
+    };
+
+    // Send the JSON string to the server
+    xhr.send(JSON.stringify(data));
+}

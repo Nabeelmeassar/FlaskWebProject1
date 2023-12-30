@@ -2,13 +2,20 @@
 Routes and views for the flask application.
 """
 
+import csv
 from datetime import datetime
+from distutils.util import rfc822_escape
 from email import message
 from operator import iconcat
 from pprint import pprint
 from tokenize import Double
+from turtle import distance
 from flask import json, render_template, request
 from folium.map import Icon
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder
 from FlaskWebProject1 import app
 from flask import Flask, current_app
 from math import radians, sin, cos, sqrt, atan2
@@ -22,9 +29,13 @@ from sklearn.neighbors import NearestNeighbors
 import pandas as pd
 import json
 import networkx as nx
+from FlaskWebProject1.Classes.distance import Distance
+from FlaskWebProject1.Classes.stadion import Stadion
+from math import radians, sin, cos, asin, sqrt
 
 
 
+cities = {}
 
 @app.route('/postjson', methods=['POST'])
 def post_json_handler():
@@ -67,16 +78,49 @@ def post_json_handler():
     # Return the modified content as JSON
     return jsonify(content)
 
-# csv_file_verein = CSVFile('C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\verein.csv')
-# csv_file_cities = CSVFile('C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\cities_data.csv')
+@app.route('/post_preference_json', methods=['POST'])
+def post_preference_json_handler():
+
+    content = request.get_json()
+    Person_Budget = float(content.get('Person_Budget'))
+    # Person_Max_Distanz = float(content.get('Person_Max_Distanz'))
+    Person_Entertainment_Fussballfan = int(content.get('Person_Entertainment_Fussballfan'))
+    Person_Traditionsfussballfan = int(content.get('Person_Traditionsfussballfan'))
+    Person_Schnaeppchenjaeger = int(content.get('Person_Schnaeppchenjaeger')) 
+    Partygaenger = int(content.get('Partygaenger')) 
+    Select_start = content.get('Select_start')
+    Tage = int(content.get('Tage'))
+    city_with_rating = predict_user_preferences(content, 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv')
+
+    for city_name, rating in city_with_rating.items():  # Assuming city_with_rating is a dictionary
+        city_id = get_city_id(city_name)  # Get the city ID using your function
+        club_coordinate = get_club_coordinates_and_city(city_id)
+        
+        cities[city_name] = {'rating': rating, 'GPS':club_coordinate[0], 'club_coordinate': club_coordinate[0], 'ID': city_id}
+    # Beispielaufruf der Funktion
+    routes , city_score = best_first_search(Select_start, cities)
+    print("Komplette Route: ", routes)
+    cities_coords = {club.stadt: (club.lat, club.long) for club in clubs}
+    # Karte erstellen
+    route = routes[:Tage]
+    football_map = create_rout_map(cities_coords, route )
+
+    # Konvertieren Sie die Karte in eine HTML-Zeichenkette
+    map_html = football_map._repr_html_()    
+    content.update({
+            'city_with_rating': cities,
+            'm_html': map_html
+    })
+
+    # Return the modified content as JSON
+    return jsonify(content)
+
 csv_file_clubs = CSVFile('C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\clubs.csv')
-# vereinen = csv_file_verein.read_verein_from_csv()
-# cities = csv_file_cities.read_cities_from_csv()
 clubs = csv_file_clubs.read_clubs_from_csv()
 
 # Erstelle ein Dictionary fuer einen schnelleren Zugriff auf die Vereine
 club_dict = {club.id: club for club in clubs}
-
+club_id = {club.stadt: club for club in clubs}
 for club in clubs:
     for _id in club.nachbarn_ids:
         # Zugriff auf den Nachbarverein ueber das Dictionary
@@ -113,8 +157,6 @@ def home():
         'index.html',
         title='Home Page',
         year=datetime.now().year,   
-        cities = cities,
-        vereinen = vereinen,
         distance = distance,
         start = selected_start,
         ziel = selected_ziel,
@@ -180,7 +222,10 @@ def shortest_path(graph, start_vertex, target_vertex):
 
 
 def get_club_name(club_id):
-    return ' => ' + str(club_id) + ' ' + club_dict[club_id].stadt 
+    return ' => ' + str(club_id) + ' ' + club_dict[club_id].stadt
+
+def get_city_cost(club_id):
+    return [club_dict[club_id].hotelkosten, club_dict[club_id].ticketkosten] 
 
 def get_club_coordinates_and_city(club_id):
     # Holen Sie die Koordinaten und den Stadtnamen des Clubs aus dem club_dict
@@ -197,15 +242,199 @@ def get_city_name(club_id):
         return club_info.stadt
     else:
         return None, None  # Oder eine andere Form der Fehlerbehandlung
+def get_city_id(club_name):
+    if club_name in club_id:
+        club_info = club_id[club_name]
+        return club_info.id
+    else:
+        return None, None  # Oder eine andere Form der Fehlerbehandlung
+
+def calculate_distance(obj, other):
+    # Umwandlung von Dezimalgraden in Radian
+    lon1, lat1, lon2, lat2 = map(radians, [obj[0], obj[1], other[0], other[1]])
     
+    # Haversine Formel
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    r = 6371 # Radius der Erde in Kilometern
+    return round((c * r), 2)
+import pandas as pd
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_error
+from collections import OrderedDict
+
+# Funktion zum Laden und Vorbereiten der Daten
+def load_and_prepare_data(csv_file_path):
+    try:
+        data = pd.read_csv(csv_file_path)
+        X = data.drop('Bewertung', axis=1)
+        y = data['Bewertung']
+        return X, y
+    except FileNotFoundError as e:
+        print(f"Datei nicht gefunden: {e}")
+        return None, None
+    except KeyError as e:
+        print(f"Fehlende Spalte: {e}")
+        return None, None
+
+# Funktion zur Bewertung des Modells
+def evaluate_model(model, X_test, y_test):
+    predictions = model.predict(X_test)
+    mse = mean_squared_error(y_test, predictions)
+    print(f"Modell MSE: {mse}")
+    return mse
+
+# Hauptfunktion fuer Vorhersagen
+def predict_user_preferences(new_user_preferences, csv_file_path):
+    X, y = load_and_prepare_data(csv_file_path)
+    if X is None or y is None:
+        return None
+
+    # Identifizieren kategorischer Spalten
+    categorical_features = ['Ziel']  # Beispiel, sollte angepasst werden
+    categorical_transformer = OneHotEncoder(handle_unknown='ignore')
+
+    # Erstellen des ColumnTransformers
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('cat', categorical_transformer, categorical_features),
+        ],
+        remainder='passthrough'
+    )
+
+    # Aufteilen in Trainings- und Testdaten
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Erstellen der Pipeline
+    pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+    ])
+
+    # Modell trainieren
+    pipeline.fit(X_train, y_train)
+
+    # Modell bewerten
+    evaluate_model(pipeline, X_test, y_test)
+
+    # Vorhersagen vorbereiten
+    predictions = {}
+    for city in X['Ziel'].unique():
+        city_data = X[X['Ziel'] == city]        
+        # Benutzerpraeferenzen aktualisieren
+        for feature, value in new_user_preferences.items():
+            if feature in city_data:
+                city_data[feature] = value
+        city_pred = pipeline.predict(city_data)[0]
+        predictions[city] = city_pred
+
+    # Sortieren der Vorhersagen
+    predictions = OrderedDict(sorted(predictions.items(), key=lambda x: x[1], reverse=True))
+
+    # Vorhersagen ausgeben
+    for city, pred in predictions.items():
+        print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred} ")
+
+    return predictions
 
 
 
+#####################################################################################################################
+import heapq
+from math import radians, cos, sin, asin, sqrt
 
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Berechnet die Entfernung zwischen zwei Punkten auf der Erde, gegeben durch Laengen- und Breitengrade.
 
+    :param lon1: Laengengrad des ersten Punktes
+    :param lat1: Breitengrad des ersten Punktes
+    :param lon2: Laengengrad des zweiten Punktes
+    :param lat2: Breitengrad des zweiten Punktes
+    :return: Entfernung in Kilometern
+    """
+    # Umwandlung von Dezimalgraden in Radianten
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
 
+    # Haversine-Formel
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    r = 6371  # Radius der Erde in Kilometern
+    return c * r
+def calculate_score(city, current_city, cities):
+    rating = cities[city]['rating']
+    distance = haversine(
+        cities[city]['GPS'][1], cities[city]['GPS'][0],
+        cities[current_city]['GPS'][1], cities[current_city]['GPS'][0]
+    )
+    return rating / distance
 
+def best_first_search(start, cities):
+    visited = set()
+    priority_queue = [(-calculate_score(start, start, cities), start)]
 
+    route = []
+    city_score = {}
+    while priority_queue:
+        _, current_city = heapq.heappop(priority_queue)
+        if current_city not in visited:
+            visited.add(current_city)
+            route.append(current_city)
+
+            for city in cities:
+                if city not in visited:
+                    score = -calculate_score(city, current_city, cities)
+                    city_score[city] = {'score': score}
+                    heapq.heappush(priority_queue, (score, city))
+
+    return route, city_score
+def create_rout_map(cities_coords, route, route_color='blue', route_weight=5):
+    # Pfad zur GeoJSON-Datei von Deutschland
+    germany_geojson_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\scripts\\2_hoch.geo.json'
+    
+    # Laden der GeoJSON-Datei
+    with open(germany_geojson_path, 'r', encoding='utf-8') as f:
+        germany_geojson = json.load(f)
+    
+    # Erstellen einer folium Karte, zentriert auf Deutschland
+    m = folium.Map(location=[51.1657, 10.4515], zoom_start=6)
+
+    # Hinzufügen der GeoJSON-Grenzen von Deutschland zur Karte
+    folium.GeoJson(
+        germany_geojson,
+        name='Germany GeoJSON'
+    ).add_to(m)
+
+    # Hinzufügen von Markern für jede Stadt in der Route
+    for index, city in enumerate(route):
+        index = index + 1
+        if city in cities_coords:
+            coords = cities_coords[city]
+            folium.Marker(
+                location=coords,
+                tooltip=club,
+                icon=folium.Icon(icon=str(index), prefix='fa', color='orange'),
+            ).add_to(m)
+
+    # Erstellen der Koordinaten für die Polyline, die die Route darstellt
+    route_coords = [cities_coords[city] for city in route if city in cities_coords]
+    
+    # Hinzufügen der Route als Polyline zur Karte
+    folium.PolyLine(route_coords, color=route_color, weight=route_weight, opacity=0.8).add_to(m)
+
+    # Anpassen der Kartenansicht, um alle Marker einzuschließen
+    bounds = [[47.2701114, 5.8663425], [55.0815, 15.0418962]]
+    m.fit_bounds(bounds)
+
+    # Rückgabe der erstellten Karte
+    return m
 
 ############################################################################################
 # import pandas as pd
@@ -664,113 +893,112 @@ def get_city_name(club_id):
 # cities_with_low_rating = data[data['Predicted_Bewertung'] < user_predicted_rating]
 # print(f'cities_with_low_rating {cities_with_low_rating}')
 ###########################################################################################################################################
-csv_file_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv' 
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.metrics import mean_squared_error
-import joblib
+# import pandas as pd
+# from sklearn.model_selection import train_test_split
+# from sklearn.ensemble import RandomForestRegressor
+# from sklearn.preprocessing import OneHotEncoder
+# from sklearn.compose import ColumnTransformer
+# from sklearn.pipeline import Pipeline
+# from sklearn.impute import SimpleImputer
+# from sklearn.metrics import mean_squared_error
+# import joblib
 
-# Daten laden
-data = pd.read_csv(csv_file_path)
+# # Daten laden
+# data = pd.read_csv(csv_file_path)
 
-# Kategoriale und numerische Spalten identifizieren
-categorical_cols = [cname for cname in data.columns if data[cname].dtype == "object" and cname not in ['Ziel', 'Bewertung']]
-numerical_cols = [cname for cname in data.columns if cname not in categorical_cols and cname != 'Bewertung' and cname != 'Ziel']
+# # Kategoriale und numerische Spalten identifizieren
+# categorical_cols = [cname for cname in data.columns if data[cname].dtype == "object" and cname not in ['Ziel', 'Bewertung']]
+# numerical_cols = [cname for cname in data.columns if cname not in categorical_cols and cname != 'Bewertung' and cname != 'Ziel']
 
-# Zielvariable (y) und Features (X) festlegen
-y = data['Bewertung']
-X = data.drop(['Ziel', 'Bewertung'], axis=1)
+# # Zielvariable (y) und Features (X) festlegen
+# y = data['Bewertung']
+# X = data.drop(['Ziel', 'Bewertung'], axis=1)
 
-# Vorverarbeitung faer numerische Daten
-numerical_transformer = SimpleImputer(strategy='mean')
+# # Vorverarbeitung fuer numerische Daten
+# numerical_transformer = SimpleImputer(strategy='mean')
 
-# Vorverarbeitung faer kategoriale Daten
-categorical_transformer = OneHotEncoder(handle_unknown='ignore')
+# # Vorverarbeitung fuer kategoriale Daten
+# categorical_transformer = OneHotEncoder(handle_unknown='ignore')
 
-# Vorverarbeitungstransformator
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', numerical_transformer, numerical_cols),
-        ('cat', categorical_transformer, categorical_cols)
-    ])
+# # Vorverarbeitungstransformator
+# preprocessor = ColumnTransformer(
+#     transformers=[
+#         ('num', numerical_transformer, numerical_cols),
+#         ('cat', categorical_transformer, categorical_cols)
+#     ])
 
-# Modell
-model = RandomForestRegressor(n_estimators=100, random_state=0)
+# # Modell
+# model = RandomForestRegressor(n_estimators=100, random_state=0)
 
-# Pipeline erstellen
-pipeline = Pipeline(steps=[('preprocessor', preprocessor),
-                           ('model', model)])
+# # Pipeline erstellen
+# pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+#                            ('model', model)])
 
-# Trainings- und Testdaten aufteilen
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# # Trainings- und Testdaten aufteilen
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Modell trainieren
-pipeline.fit(X_train, y_train)
+# # Modell trainieren
+# pipeline.fit(X_train, y_train)
 
-# Modellbewertung
-preds_test = pipeline.predict(X_test)
-rmse = mean_squared_error(y_test, preds_test, squared=False)
-print(f'Test RMSE: {rmse}')
+# # Modellbewertung
+# preds_test = pipeline.predict(X_test)
+# rmse = mean_squared_error(y_test, preds_test, squared=False)
+# print(f'Test RMSE: {rmse}')
 
-# Modell speichern
-model_filename = 'travel_recommendation_model.joblib'
-joblib.dump(pipeline, model_filename)
+# # Modell speichern
+# model_filename = 'travel_recommendation_model.joblib'
+# joblib.dump(pipeline, model_filename)
 
-# Neue Benutzerpraeferenzen
-new_preferences = {
-        'Entfernung_km': 600,
-        'Zielort_Nachtleben': 'Hoch',
-        'User_Budget': 1200,
-        'User_Max. Distanz': 1000,
-        'User_Entertainment Fussballfan': 'Hoch',
-        'User_Traditionsfussballfan': 'Hoch'  
-}
+# # Neue Benutzerpraeferenzen
+# new_preferences = {
+#         'Entfernung_km': 1000,
+#         'Zielort_Nachtleben': 'Hoch',
+#         'User_Budget': 1200,
+#         'User_Max. Distanz': 1000,
+#         'User_Entertainment Fussballfan': 'Hoch',
+#         'User_Traditionsfussballfan': 'Hoch'  
+# }
 
-# DataFrame fuer neue Benutzerpraeferenzen erstellen
-user_pref_df = pd.DataFrame(columns=X.columns)
-for col in numerical_cols:
-    user_pref_df[col] = [new_preferences.get(col, X_train[col].median())]
-for col in categorical_cols:
-    user_pref_df[col] = [new_preferences.get(col, X_train[col].mode()[0])]
+# # DataFrame fuer neue Benutzerpraeferenzen erstellen
+# user_pref_df = pd.DataFrame(columns=X.columns)
+# for col in numerical_cols:
+#     user_pref_df[col] = [new_preferences.get(col, X_train[col].median())]
+# for col in categorical_cols:
+#     user_pref_df[col] = [new_preferences.get(col, X_train[col].mode()[0])]
 
-# Vorhersage der Bewertung mit den neuen Benutzerpraeferenzen
-user_pref_df_encoded = pipeline.named_steps['preprocessor'].transform(user_pref_df)
+# # Vorhersage der Bewertung mit den neuen Benutzerpraeferenzen
+# user_pref_df_encoded = pipeline.named_steps['preprocessor'].transform(user_pref_df)
 
-feature_importances = pipeline.named_steps['model'].feature_importances_
-feature_names = numerical_cols + \
-                list(pipeline.named_steps['preprocessor'].named_transformers_['cat'].get_feature_names_out(categorical_cols))
-for name, importance in sorted(zip(feature_names, feature_importances), key=lambda x: x[1], reverse=True):
-    print(f"{name}: {importance}")
+# feature_importances = pipeline.named_steps['model'].feature_importances_
+# feature_names = numerical_cols + \
+#                 list(pipeline.named_steps['preprocessor'].named_transformers_['cat'].get_feature_names_out(categorical_cols))
+# for name, importance in sorted(zip(feature_names, feature_importances), key=lambda x: x[1], reverse=True):
+#     print(f"{name}: {importance}")
 
-user_predicted_rating = pipeline.predict(user_pref_df)[0]  # Benutzen Sie hier nicht 'user_pref_df_encoded'
-print(f'Vorhergesagte Bewertung fuer Benutzerpraeferenzen: {user_predicted_rating}')
+# user_predicted_rating = pipeline.predict(user_pref_df)[0]  # Benutzen Sie hier nicht 'user_pref_df_encoded'
+# print(f'Vorhergesagte Bewertung fuer Benutzerpraeferenzen: {user_predicted_rating}')
 
-# Vorhersagen faer alle Staedte treffen
-data['Predicted_Bewertung'] = pipeline.predict(X)
-######################################################
+# # Vorhersagen faer alle Staedte treffen
+# data['Predicted_Bewertung'] = pipeline.predict(X)
+# ######################################################
 
-print('#######################################################################')
-# Die Staedte auswaehlen, deren vorhergesagte Bewertungen nahe der Benutzerbewertung sind
-# Dies sind die Staedte, die wahrscheinlich am besten zu den Praeferenzen des Benutzers passen
-suitable_cities = data[abs(data['Predicted_Bewertung'] - user_predicted_rating) < 0.3]
+# print('#######################################################################')
+# # Die Staedte auswaehlen, deren vorhergesagte Bewertungen nahe der Benutzerbewertung sind
+# # Dies sind die Staedte, die wahrscheinlich am besten zu den Praeferenzen des Benutzers passen
+# suitable_cities = data[abs(data['Predicted_Bewertung'] - user_predicted_rating) < 0.3]
 
-# Ausgabe der Staedte, die gut zu den Benutzerpraeferenzen passen
-print('Staedte, die gut zu den Benutzerpraeferenzen passen:')
-print(suitable_cities[['Ziel', 'Predicted_Bewertung']])
+# # Ausgabe der Staedte, die gut zu den Benutzerpraeferenzen passen
+# print('Staedte, die gut zu den Benutzerpraeferenzen passen:')
+# print(suitable_cities[['Ziel', 'Predicted_Bewertung']])
 
-# Die Staedte auswaehlen, deren vorhergesagte Bewertungen deutlich von der Benutzerbewertung abweichen
-# Diese Staedte sind wahrscheinlich weniger geeignet fuer den Benutzer
-unsuitable_cities = data[abs(data['Predicted_Bewertung'] - user_predicted_rating) >= 0.3]
+# # Die Staedte auswaehlen, deren vorhergesagte Bewertungen deutlich von der Benutzerbewertung abweichen
+# # Diese Staedte sind wahrscheinlich weniger geeignet fuer den Benutzer
+# unsuitable_cities = data[abs(data['Predicted_Bewertung'] - user_predicted_rating) >= 0.3]
 
-# Ausgabe der Staedte, die weniger gut zu den Benutzerpraeferenzen passen
-print('Staedte, die weniger gut zu den Benutzerpraeferenzen passen:')
-print(unsuitable_cities[['Ziel', 'Predicted_Bewertung']])
-print('#######################################################################')
+# # Ausgabe der Staedte, die weniger gut zu den Benutzerpraeferenzen passen
+# print('Staedte, die weniger gut zu den Benutzerpraeferenzen passen:')
+# print(unsuitable_cities[['Ziel', 'Predicted_Bewertung']])
+# print('#######################################################################')
 
 ######################################################
 
@@ -789,3 +1017,175 @@ print('#######################################################################')
 
 
 ########################################################################################################################################
+# import pandas as pd
+# from sklearn.model_selection import train_test_split
+# from sklearn.ensemble import RandomForestRegressor
+# from sklearn.metrics import mean_squared_error
+# import joblib
+
+# # Pfad zur CSV-Datei - Sie muessen diesen Pfad entsprechend Ihrer Dateistruktur anpassen.
+# MODEL_PATH = 'mein_modell.joblib'  # Pfad zum Speichern des trainierten Modells
+
+# # CSV-Datei einlesen
+# df = pd.read_csv(csv_file_path)
+
+# # Vorverarbeitung: Umwandeln von kategorischen in numerische Daten
+# df = pd.get_dummies(df)
+
+# # Zielvariable 'Bewertung' und Merkmale trennen
+# X = df.drop('Bewertung', axis=1)  # Merkmale
+# y = df['Bewertung']  # Zielvariable
+
+# # Aufteilen der Daten in Trainings- und Testsets
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# # Modell instanziieren und trainieren
+# model = RandomForestRegressor(n_estimators=100, random_state=42)
+# model.fit(X_train, y_train)
+
+# # Modell evaluieren
+# y_pred = model.predict(X_test)
+# mse = mean_squared_error(y_test, y_pred)
+# print(f"Mean Squared Error: {mse}")
+
+# # Speichern des trainierten Modells
+# joblib.dump(model, MODEL_PATH)
+
+# # Laden des gespeicherten Modells
+# def load_model(model_path):
+#     return joblib.load(model_path)
+
+# # Laden der Staedtedaten aus einer CSV-Datei
+# def load_cities_data(cities_data_path):
+#     return pd.read_csv(cities_data_path)
+
+# # Vorhersagen der Bewertungen fuer jede Stadt basierend auf den Benutzerpraeferenzen
+# def predict_ratings(model, cities_df, user_preferences):
+#     # Erstellen Sie eine Kopie von cities_df, um Originaldaten nicht zu ueberschreiben
+#     prediction_df = cities_df.copy()
+    
+#     # Ersetzen der entsprechenden Spalten in prediction_df mit den Werten aus user_preferences
+#     for preference, value in user_preferences.items():
+#         if preference in prediction_df.columns:
+#             prediction_df[preference] = value
+#         else:
+#             raise ValueError(f"The preference '{preference}' is not in the cities data.")
+    
+#     # Sicherstellen, dass alle benoetigten Dummy-Variablen vorhanden sind
+#     prediction_df = pd.get_dummies(prediction_df)
+    
+#     # Die fehlenden Spalten in prediction_df im Vergleich zu X hinzufuegen, mit 0 initialisiert
+#     for column in X.columns:
+#         if column not in prediction_df.columns:
+#             prediction_df[column] = 0
+    
+#     features = prediction_df[X.columns]  # Benutze die gleichen Spalten wie das trainierte Modell
+#     ratings = model.predict(features)
+#     return ratings
+
+# # Hauptfunktion, die das gesamte Szenario ausfuehrt
+# def main(user_preferences):
+#     # Modell und Staedtedaten laden
+#     model = load_model(MODEL_PATH)
+#     cities_df = load_cities_data(csv_file_path)
+
+#     # Bewertungen basierend auf Benutzerpraeferenzen vorhersagen
+#     predicted_ratings = predict_ratings(model, cities_df, user_preferences)
+#     cities_df['Bewertung'] = predicted_ratings
+
+#     # Ergebnisse ausgeben
+#     print(cities_df[['Ziel', 'Bewertung']].sort_values(by='Bewertung', ascending=False))
+
+# # Beispielhafte Benutzerpraeferenzen
+# user_preferences = {
+#         'Person_Budget': 720,
+#         'Person_Max. Distanz': 700,
+#         'Person_Entertainment Fussballfan': 'Hoch',
+#         'Person_Traditionsfussballfan': 'Hoch', 
+#         'Person_Schnaeppchenjaeger': 'Hoch' 
+# }
+
+# # Hauptfunktion mit den Benutzerpraeferenzen aufrufen
+# main(user_preferences)
+###############################################################################################################
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestRegressor
+from collections import OrderedDict
+
+
+# # Make sure to import Pandas at the beginning of the script
+# # and ensure that 'csv_file_path' variable is defined with the path to your CSV file.
+
+# # Daten laden
+# def predict_user_preferences(new_user_preferences) :
+#     csv_file_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv' 
+#     data = pd.read_csv(csv_file_path)
+#     # Features und Zielvariable definieren
+#     X = data.drop(columns=['Bewertung'])  # Entfernen Sie die Bewertungsspalte, um die Features zu erhalten
+#     y = data['Bewertung']  # Zielvariable
+
+#     # Identify categorical columns - this is just an example
+#     categorical_columns = ['Ziel']
+
+#     # Create a ColumnTransformer to encode categorical columns
+#     preprocessor = ColumnTransformer(
+#         transformers=[
+#             ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_columns)
+#         ],
+#         remainder='passthrough'  # This will pass through other columns unchanged
+#     )
+
+#     # Create a pipeline that first encodes the data then fits the model
+#     pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+#                                ('model', RandomForestRegressor(random_state=42))]) 
+
+#     # Split the data into training and testing sets
+#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+#     # Now use the pipeline to fit the model
+#     pipeline.fit(X_train, y_train)
+
+#     # Ein DataFrame fuer Vorhersagen erstellen, der fuer jede Stadt eine Zeile hat
+#     # Wir gehen davon aus, dass 'Ziel' die Spalte ist, die die Stadt identifiziert
+#     unique_cities = X['Ziel'].unique()
+
+#     # Initialize an empty list to store the rows
+#     rows_list = []
+
+#     for city in unique_cities:
+#         # For each city, create a row with the user preferences
+#         city_row = X[X['Ziel'] == city].iloc[0].to_dict()  # Convert the row to a dictionary
+#         for pref_key, pref_value in new_user_preferences.items():
+#             city_row[pref_key] = pref_value  # Update user preferences
+    
+#         # Add the updated row dictionary to the list
+#         rows_list.append(city_row)
+
+#     # Convert the list of dictionaries to a DataFrame
+#     predictions_df = pd.DataFrame(rows_list)
+
+#     # Ensure that the DataFrame contains only the necessary features
+#     predictions_df = predictions_df[X.columns]
+
+#     # Vorhersagen fuer jede Stadt treffen
+#     # Make sure to drop 'Bewertung' if it is included in the DataFrame from the previous steps
+#     features_for_prediction = predictions_df.drop(columns=['Bewertung'], errors='ignore')
+#     predictions = pipeline.predict(features_for_prediction)
+#     predictions_df['Bewertung'] = predictions
+
+#     # Add the city names back to the DataFrame for easy reference
+#     predictions_df['Ziel'] = unique_cities
+
+#     # Sort the DataFrame by the predicted 'Bewertung' in descending order to get the best ratings first
+#     sorted_predictions_df = predictions_df.sort_values(by='Bewertung', ascending=False)
+
+#     city_rating = OrderedDict()
+#     for index, row in sorted_predictions_df.iterrows():
+#         print(f"Vorhergesagte Bewertung fuer {row['Ziel']}: {row['Bewertung']}")
+#         city_rating[row['Ziel']] = row['Bewertung']
+#     return city_rating
+###################################################################################################################

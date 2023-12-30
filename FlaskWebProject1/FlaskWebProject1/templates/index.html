@@ -9,67 +9,163 @@
     <div class="panel-body">
         <div class="col-md-12">
             <div class="row">
-                <form id="myForm">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            {# Dropdown list to select the start club #}
+                <div class=" col-md-4">
+                    <form id="preferenceForm">
+                        <div>
+                            <label for="tage">Start von :</label>
+                        </div>
+                        <div>
+                            {# Dropdown list to select the start city #}
                             <select class="form-select select_sy" required id="select_start" name="select_start">
-                                <option disabled selected>Start von</option>
                                 {# Loop through the list of clubs and add them as options #}
                                 {% for club in clubs %}
-                                <option value="{{club.id}}">{{club.id}} {{club.stadt}}</option>
+                                <option value="{{club.stadt}}">{{club.id}} {{club.stadt}}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        <div class="form-group">
-                            {# Dropdown list to select the target club #}
-                            <select class="form-select select_sy" required id="select_ziel" name="select_ziel">
-                                <option disabled selected>Ziel</option>
-                                {% for club in clubs %}
-                                <option value="{{club.id}}">{{club.id}} {{club.verein}}</option>
+                        <div>
+                            <label for="tage">Anzahl freie Tage :</label>
+                        </div>
+                        <div>
+                            <select class="form-select select_sy" id="tage" name="tage">
+                                {% for tage in range(1, 19, 1) %}
+                                <option value="{{tage}}">{{tage}}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        <div class="form-group">
-                            {# Dropdown list to select the maximum distance #}
-                            <select class="form-select select_sy" id="max_distance" required name="max_distance">
-                                <option disabled selected>Maximale Entfernung</option>
-                                {% for max__distance in range(100, 1800, 50) %}
-                                <option value="{{max__distance}}">{{max__distance}} KM</option>
+                        <div>
+                            <label for="budget">Budget:</label>
+                        </div>
+                        <div>
+                            <select class="form-select select_sy" id="budget" name="Person_Budget">
+                                {% for bug in range(100, 5000, 50) %}
+                                <option value="{{bug}}">{{bug}} Euro</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        <div class="form-group">
-                            {# Dropdown list to select the budget #}
-                            <select class="form-select select_sy" id="budget" name="budget">
-                                <option disabled selected>Budget</option>
-                                {% for bugg in range(100, 5000, 50) %}
-                                <option value="{{bugg}}">{{bugg}} Euro</option>
+                        <div>
+                            <label for="max-distance">Max Distance:</label>
+                        </div>
+                        <!--<div>
+                            <select class="form-select select_sy" id="max_distance" name="Person_Max_Distanz">
+                                {% for max_distance in range(100, 1800, 50) %}
+                                <option value="{{max_distance}}">{{max_distance}} KM</option>
                                 {% endfor %}
                             </select>
+                        </div>-->
+                        <div>
+                            <label>Entertainment Fussballfan:</label>
+                        </div>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Person_Entertainment_Fussballfan" id="entertainmentLow" value="1">
+                                <label class="form-check-label" for="entertainmentLow">Niedrig</label>
+                                <input class="form-check-input" type="radio" name="Person_Entertainment_Fussballfan" id="entertainmentMedium" value="2" checked>
+                                <label class="form-check-label" for="entertainmentMedium">Mittel</label>
+                                <input class="form-check-input" type="radio" name="Person_Entertainment_Fussballfan" id="entertainmentHigh" value="3">
+                                <label class="form-check-label" for="entertainmentHigh">Hoch</label>
+                            </div>
                         </div>
 
-                        {# Send button that calls the "sendFormData()" function when clicked #}
-                        <button class="btn btn-primary" type="button" onclick="sendFormData()">GO GO GO ...</button>
-                    </div>
-                </form>
+                        <div>
+                            <label>Traditionsfussballfan:</label>
+                        </div>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Person_Traditionsfussballfan" id="traditionsfanLow" value="1">
+                                <label class="form-check-label" for="traditionsfanLow">Niedrig</label>
+                                <input class="form-check-input" type="radio" name="Person_Traditionsfussballfan" id="traditionsfanMedium" value="2" checked>
+                                <label class="form-check-label" for="traditionsfanMedium">Mittel</label>
+                                <input class="form-check-input" type="radio" name="Person_Traditionsfussballfan" id="traditionsfanHigh" value="3">
+                                <label class="form-check-label" for="traditionsfanHigh">Hoch</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="schnaeppchenjaeger">Schnaeppchenjaeger:</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Person_Schnaeppchenjaeger" id="schnaeppchenjaegerLow" value="1">
+                            <label class="form-check-label" for="schnaeppchenjaegerLow">Niedrig</label>
+                            <input class="form-check-input" type="radio" name="Person_Schnaeppchenjaeger" id="schnaeppchenjaegerMedium" value="2" checked>
+                            <label class="form-check-label" for="schnaeppchenjaegerMedium">Mittel</label>
+                            <input class="form-check-input" type="radio" name="Person_Schnaeppchenjaeger" id="schnaeppchenjaegerHigh" value="3">
+                            <label class="form-check-label" for="schnaeppchenjaegerHigh">Hoch</label>
+                        </div>
+                        <label>Partygaenger</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Partygaenger" id="partygaengerJa" value="1" checked>
+                            <label class="form-check-label" for="partygaengerJa">Ja</label>
+                            <input class="form-check-input" type="radio" name="Partygaenger" id="partygaengerNein" value="0">
+                            <label class="form-check-label" for="partygaengerNein">Nein</label>
+                        </div>
+                        <div>
+                            <!-- Send button that calls the "sendPreferenceFormData()" function when clicked -->
+                            <button class="btn btn-primary" type="button" onclick="sendPreferenceFormData()">GO GO GO ..</button>
+                        </div>
+                    </form>
+                </div>
+                <!--<form id="myForm">
+        <div class="col-md-4">
+            <div class="form-group">
+                {# Dropdown list to select the start club #}
+                <select class="form-select select_sy" required id="select_start" name="select_start">
+                    <option disabled selected>Start von</option>
+                    {# Loop through the list of clubs and add them as options #}
+                    {% for club in clubs %}
+                    <option value="{{club.id}}">{{club.id}} {{club.stadt}}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
+            <div class="form-group">
+                {# Dropdown list to select the target club #}
+                <select class="form-select select_sy" required id="select_ziel" name="select_ziel">
+                    <option disabled selected>Ziel</option>
+                    {% for club in clubs %}
+                    <option value="{{club.id}}">{{club.id}} {{club.verein}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                {# Dropdown list to select the maximum distance #}
+                <select class="form-select select_sy" id="max_distance" required name="max_distance">
+                    <option disabled selected>Maximale Entfernung</option>
+                    {% for max__distance in range(100, 1800, 50) %}
+                    <option value="{{max__distance}}">{{max__distance}} KM</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                {# Dropdown list to select the budget #}
+                <select class="form-select select_sy" id="budget" name="budget">
+                    <option disabled selected>Budget</option>
+                    {% for bugg in range(100, 5000, 50) %}
+                    <option value="{{bugg}}">{{bugg}} Euro</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {# Send button that calls the "sendFormData()" function when clicked #}
+            <button class="btn btn-primary" type="button" onclick="sendFormData()">GO GO GO ...</button>
+        </div>
+    </form>-->
                 {# Container to display decision information #}
-                <div class="col-md-4 alert alert-info not_show" id="entscheidung_content"></div>
+                <div class="col-md-8 alert alert-info not_show" id="entscheidung_content"></div>
 
                 {# Container to display the Bundesliga tree #}
                 <!--<div class="col-md-4">
-                    <img src="../static/imags/bundesliga_baum.png" width="430" />
-                </div>-->
+        <img src="../static/imags/bundesliga_baum.png" width="430" />
+    </div>-->
             </div>
+           
         </div>
     </div>
 
-    <div id="mapdiv">
-    </div>
+    <div id="mapdiv"></div>
+    <div id="result"></div>
+
     {# Table to display the clubs and their distances #}
     <!--<table class="table">
         <tr>
