@@ -34,10 +34,13 @@
     <Compile Include="FlaskWebProject1\Classes\Distance.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FlaskWebProject1\Classes\Map.py">
+    <Compile Include="FlaskWebProject1\Classes\routePlanner.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FlaskWebProject1\Classes\stadion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FlaskWebProject1\Classes\userPreferencePredictor.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FlaskWebProject1\Classes\Verein.py">

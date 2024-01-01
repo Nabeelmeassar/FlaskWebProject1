@@ -1,4 +1,4 @@
-function sendFormData() {
+﻿function sendFormData() {
     var xhr = new XMLHttpRequest();
 
     xhr.open("POST", '/postjson', true);
@@ -64,6 +64,7 @@ function sendPreferenceFormData() {
     xhr.setRequestHeader("Content-Type", "application/json");
     var entscheidungContentElement = document.getElementById('entscheidung_content');
     var mymap = document.getElementById('mapdiv');
+    var city_score_div = document.getElementById('city_score');
     entscheidungContentElement.style.visibility = 'visible';
     entscheidungContentElement.innerHTML = '';
 
@@ -71,7 +72,18 @@ function sendPreferenceFormData() {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var jsonResponse = JSON.parse(xhr.responseText);
             var cityRatings = jsonResponse.city_with_rating;
-            mymap.innerHTML = jsonResponse.m_html; // Assuming 'mymap' is a valid DOM element.
+            var html = '<ul>'; // Starten Sie mit einer ungeordneten Liste
+            for (var city in jsonResponse.city_score) {
+                if (jsonResponse.city_score.hasOwnProperty(city)) {
+                    var score = jsonResponse.city_score[city].score;
+                    html += '<li>' + city + ': ' + score + '</li>'; // Fügen Sie jedes Stadt-Score-Paar als Listenelement hinzu
+                }
+            }
+            html += '</ul>';
+            mymap.innerHTML = jsonResponse.route; 
+            mymap.innerHTML += jsonResponse.m_html; // Assuming 'mymap' is a valid DOM element.
+            mymap.innerHTML += 'Die Funktion `calculate_score` berechnet einen Punktwert für eine Stadt. Dieser Wert hängt davon ab, wie gut die Stadt bewertet ist und wie weit sie von einer anderen Stadt entfernt ist. Je besser die Bewertung und je näher die Stadt, desto höher der Punktwert.'; 
+            mymap.innerHTML += html; 
 
             // Convert object to an array of [city, rating] pairs
             var ratingsArray = [];
@@ -87,7 +99,10 @@ function sendPreferenceFormData() {
             });
 
             // Start building the HTML string for a table
-            var htmlContent = '<table border="1" class="table">'; // Add border for visibility
+            alert('Der mittlere quadratische Fehler (Mean Squared Error, MSE) ist eine Metrik zur Beurteilung der Qualität eines Regressionsmodells. MSE=n1​∑i=1n​(yi​−y^​i​)2 = ' + jsonResponse.mse + ' city_score ' + jsonResponse.city_score)
+            console.log(jsonResponse.city_score)
+            var htmlContent = '' 
+            htmlContent += '<table class="table">'; // Add border for visibility
 
             // Add table headers
             htmlContent += '<tr><th>Plaz</th><th>ID</th><th>Stadt</th><th>Bewertung</th><th>GPS</th></tr>';
@@ -100,10 +115,10 @@ function sendPreferenceFormData() {
                 htmlContent += '<td>' + (i + 1) + '</td>'; // Count, i starts from 0, hence (i + 1).
                 htmlContent += '<td>' + cityData.ID + '</td>'; // City ID
                 htmlContent += '<td>' + city + '</td>'; // City Name
-                htmlContent += '<td>' + cityData.rating + '</td>'; // Rating
-                htmlContent += '<td>' + cityData.club_coordinate+ '</td>'; // GPS Coordinates, changed 'club_coordinate' to 'gps'
+                htmlContent += '<td>' + cityData.rating.toFixed(2) + '</td>'; // Rating
+                htmlContent += '<td>' + cityData.GPS + '</td>'; // GPS Coordinates, changed 'club_coordinate' to 'gps'
+                //htmlContent += '<td>' + jsonResponse.city_score[city].score.toFixed(2) + '</td>';
                 htmlContent += '</tr>';
-                console.log(cityData);
             }
 
             // Close the table tag

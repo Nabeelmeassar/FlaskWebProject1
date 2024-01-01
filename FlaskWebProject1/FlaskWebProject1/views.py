@@ -1,42 +1,27 @@
 """
 Routes and views for the flask application.
 """
-
-import csv
-from datetime import datetime
-from distutils.util import rfc822_escape
-from email import message
-from operator import iconcat
-from pprint import pprint
-from tokenize import Double
-from turtle import distance
-from flask import json, render_template, request
-from folium.map import Icon
-from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
-from FlaskWebProject1 import app
-from flask import Flask, current_app
-from math import radians, sin, cos, sqrt, atan2
-from FlaskWebProject1.Classes.CSVFile import CSVFile
-from FlaskWebProject1.Classes.Map import Map
-from FlaskWebProject1.Classes.Verein import Verein
-from flask import Flask, request, jsonify
+import json
 import heapq
 import folium
-from sklearn.neighbors import NearestNeighbors
 import pandas as pd
-import json
-import networkx as nx
-from FlaskWebProject1.Classes.distance import Distance
-from FlaskWebProject1.Classes.stadion import Stadion
-from math import radians, sin, cos, asin, sqrt
-
-
-
+from email import message
+from turtle import distance
+from FlaskWebProject1 import app
+from flask import request, jsonify
+from math import radians, sin, cos, sqrt
+from sklearn.metrics import mean_squared_error
+from flask import json, render_template, request
+from sklearn.model_selection import train_test_split
+from datetime import datetime
+from collections import OrderedDict
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.ensemble import RandomForestRegressor
+from FlaskWebProject1.Classes.CSVFile import CSVFile
+from FlaskWebProject1.Classes.routePlanner import RoutePlanner
 cities = {}
-
 @app.route('/postjson', methods=['POST'])
 def post_json_handler():
 
@@ -82,15 +67,9 @@ def post_json_handler():
 def post_preference_json_handler():
 
     content = request.get_json()
-    Person_Budget = float(content.get('Person_Budget'))
-    # Person_Max_Distanz = float(content.get('Person_Max_Distanz'))
-    Person_Entertainment_Fussballfan = int(content.get('Person_Entertainment_Fussballfan'))
-    Person_Traditionsfussballfan = int(content.get('Person_Traditionsfussballfan'))
-    Person_Schnaeppchenjaeger = int(content.get('Person_Schnaeppchenjaeger')) 
-    Partygaenger = int(content.get('Partygaenger')) 
     Select_start = content.get('Select_start')
     Tage = int(content.get('Tage'))
-    city_with_rating = predict_user_preferences(content, 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv')
+    city_with_rating, mse = predict_user_preferences(content, 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv')
 
     for city_name, rating in city_with_rating.items():  # Assuming city_with_rating is a dictionary
         city_id = get_city_id(city_name)  # Get the city ID using your function
@@ -98,18 +77,23 @@ def post_preference_json_handler():
         
         cities[city_name] = {'rating': rating, 'GPS':club_coordinate[0], 'club_coordinate': club_coordinate[0], 'ID': city_id}
     # Beispielaufruf der Funktion
-    routes , city_score = best_first_search(Select_start, cities)
-    print("Komplette Route: ", routes)
     cities_coords = {club.stadt: (club.lat, club.long) for club in clubs}
     # Karte erstellen
+    routePlanner = RoutePlanner(cities, cities_coords)
+    routes , city_score = routePlanner.best_first_search(Select_start)
     route = routes[:Tage]
-    football_map = create_rout_map(cities_coords, route )
+    print("Komplette Route: ", routes)
+    # Karte erstellen
+    football_map = routePlanner.create_rout_map(route )
 
     # Konvertieren Sie die Karte in eine HTML-Zeichenkette
     map_html = football_map._repr_html_()    
     content.update({
             'city_with_rating': cities,
-            'm_html': map_html
+            'm_html': map_html,
+            'route': route,
+            'city_score': city_score,
+            'mse': mse
     })
 
     # Return the modified content as JSON
@@ -169,7 +153,7 @@ def home():
     return render_template(
         'index.html',
         title='Home Page',
-        year=datetime.now().year,
+        year=datetime.now().strftime('%Y.%d.%h'),        
         clubs = clubs,
         )
 
@@ -260,14 +244,7 @@ def calculate_distance(obj, other):
     c = 2 * asin(sqrt(a))
     r = 6371 # Radius der Erde in Kilometern
     return round((c * r), 2)
-import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import mean_squared_error
-from collections import OrderedDict
+
 
 # Funktion zum Laden und Vorbereiten der Daten
 def load_and_prepare_data(csv_file_path):
@@ -282,7 +259,6 @@ def load_and_prepare_data(csv_file_path):
     except KeyError as e:
         print(f"Fehlende Spalte: {e}")
         return None, None
-
 # Funktion zur Bewertung des Modells
 def evaluate_model(model, X_test, y_test):
     predictions = model.predict(X_test)
@@ -320,7 +296,7 @@ def predict_user_preferences(new_user_preferences, csv_file_path):
     pipeline.fit(X_train, y_train)
 
     # Modell bewerten
-    evaluate_model(pipeline, X_test, y_test)
+    model_mse = evaluate_model(pipeline, X_test, y_test)
 
     # Vorhersagen vorbereiten
     predictions = {}
@@ -340,102 +316,7 @@ def predict_user_preferences(new_user_preferences, csv_file_path):
     for city, pred in predictions.items():
         print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred} ")
 
-    return predictions
-
-
-
-#####################################################################################################################
-import heapq
-from math import radians, cos, sin, asin, sqrt
-
-def haversine(lon1, lat1, lon2, lat2):
-    """
-    Berechnet die Entfernung zwischen zwei Punkten auf der Erde, gegeben durch Laengen- und Breitengrade.
-
-    :param lon1: Laengengrad des ersten Punktes
-    :param lat1: Breitengrad des ersten Punktes
-    :param lon2: Laengengrad des zweiten Punktes
-    :param lat2: Breitengrad des zweiten Punktes
-    :return: Entfernung in Kilometern
-    """
-    # Umwandlung von Dezimalgraden in Radianten
-    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
-
-    # Haversine-Formel
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    c = 2 * asin(sqrt(a))
-    r = 6371  # Radius der Erde in Kilometern
-    return c * r
-def calculate_score(city, current_city, cities):
-    rating = cities[city]['rating']
-    distance = haversine(
-        cities[city]['GPS'][1], cities[city]['GPS'][0],
-        cities[current_city]['GPS'][1], cities[current_city]['GPS'][0]
-    )
-    return rating / distance
-
-def best_first_search(start, cities):
-    visited = set()
-    priority_queue = [(-calculate_score(start, start, cities), start)]
-
-    route = []
-    city_score = {}
-    while priority_queue:
-        _, current_city = heapq.heappop(priority_queue)
-        if current_city not in visited:
-            visited.add(current_city)
-            route.append(current_city)
-
-            for city in cities:
-                if city not in visited:
-                    score = -calculate_score(city, current_city, cities)
-                    city_score[city] = {'score': score}
-                    heapq.heappush(priority_queue, (score, city))
-
-    return route, city_score
-def create_rout_map(cities_coords, route, route_color='blue', route_weight=5):
-    # Pfad zur GeoJSON-Datei von Deutschland
-    germany_geojson_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\scripts\\2_hoch.geo.json'
-    
-    # Laden der GeoJSON-Datei
-    with open(germany_geojson_path, 'r', encoding='utf-8') as f:
-        germany_geojson = json.load(f)
-    
-    # Erstellen einer folium Karte, zentriert auf Deutschland
-    m = folium.Map(location=[51.1657, 10.4515], zoom_start=6)
-
-    # Hinzufügen der GeoJSON-Grenzen von Deutschland zur Karte
-    folium.GeoJson(
-        germany_geojson,
-        name='Germany GeoJSON'
-    ).add_to(m)
-
-    # Hinzufügen von Markern für jede Stadt in der Route
-    for index, city in enumerate(route):
-        index = index + 1
-        if city in cities_coords:
-            coords = cities_coords[city]
-            folium.Marker(
-                location=coords,
-                tooltip=club,
-                icon=folium.Icon(icon=str(index), prefix='fa', color='orange'),
-            ).add_to(m)
-
-    # Erstellen der Koordinaten für die Polyline, die die Route darstellt
-    route_coords = [cities_coords[city] for city in route if city in cities_coords]
-    
-    # Hinzufügen der Route als Polyline zur Karte
-    folium.PolyLine(route_coords, color=route_color, weight=route_weight, opacity=0.8).add_to(m)
-
-    # Anpassen der Kartenansicht, um alle Marker einzuschließen
-    bounds = [[47.2701114, 5.8663425], [55.0815, 15.0418962]]
-    m.fit_bounds(bounds)
-
-    # Rückgabe der erstellten Karte
-    return m
-
+    return predictions, model_mse
 ############################################################################################
 # import pandas as pd
 # from sklearn.model_selection import train_test_split
@@ -1108,15 +989,6 @@ def create_rout_map(cities_coords, route, route_color='blue', route_weight=5):
 # # Hauptfunktion mit den Benutzerpraeferenzen aufrufen
 # main(user_preferences)
 ###############################################################################################################
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestRegressor
-from collections import OrderedDict
-
-
 # # Make sure to import Pandas at the beginning of the script
 # # and ensure that 'csv_file_path' variable is defined with the path to your CSV file.
 

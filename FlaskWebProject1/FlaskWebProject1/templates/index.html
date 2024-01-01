@@ -3,13 +3,11 @@
 
 {# Begins the content block that is defined in "layout.html" #}
 {% block content %}
-
-<div class="panel panel-default m-2">
-    <div class="panel-heading">Bundesliga</div>
-    <div class="panel-body">
-        <div class="col-md-12">
-            <div class="row">
-                <div class=" col-md-4">
+    <div class="m-5 alert">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="m-2 alert alert-info">
+                    <h2>Benutzerpraeferenzen Eingabe:</h2>
                     <form id="preferenceForm">
                         <div>
                             <label for="tage">Start von :</label>
@@ -46,13 +44,6 @@
                         <div>
                             <label for="max-distance">Max Distance:</label>
                         </div>
-                        <!--<div>
-                            <select class="form-select select_sy" id="max_distance" name="Person_Max_Distanz">
-                                {% for max_distance in range(100, 1800, 50) %}
-                                <option value="{{max_distance}}">{{max_distance}} KM</option>
-                                {% endfor %}
-                            </select>
-                        </div>-->
                         <div>
                             <label>Entertainment Fussballfan:</label>
                         </div>
@@ -89,7 +80,7 @@
                             <input class="form-check-input" type="radio" name="Person_Schnaeppchenjaeger" id="schnaeppchenjaegerMedium" value="2" checked>
                             <label class="form-check-label" for="schnaeppchenjaegerMedium">Mittel</label>
                             <input class="form-check-input" type="radio" name="Person_Schnaeppchenjaeger" id="schnaeppchenjaegerHigh" value="3">
-                            <label class="form-check-label" for="schnaeppchenjaegerHigh">Hoch</label>
+                            <label class="form-check-label" for="schnaeppchenjaegerHigh">Hoch </label>
                         </div>
                         <label>Partygaenger</label>
                         <div class="form-check form-check-inline">
@@ -100,91 +91,24 @@
                         </div>
                         <div>
                             <!-- Send button that calls the "sendPreferenceFormData()" function when clicked -->
-                            <button class="btn btn-primary" type="button" onclick="sendPreferenceFormData()">GO GO GO ..</button>
+                            <button class="btn btn-primary m-5" type="button" onclick="sendPreferenceFormData()">GO GO GO ..</button>
+                        </div>
+                        <div id="city_score">
                         </div>
                     </form>
                 </div>
-                <!--<form id="myForm">
-        <div class="col-md-4">
-            <div class="form-group">
-                {# Dropdown list to select the start club #}
-                <select class="form-select select_sy" required id="select_start" name="select_start">
-                    <option disabled selected>Start von</option>
-                    {# Loop through the list of clubs and add them as options #}
-                    {% for club in clubs %}
-                    <option value="{{club.id}}">{{club.id}} {{club.stadt}}</option>
-                    {% endfor %}
-                </select>
             </div>
-
-            <div class="form-group">
-                {# Dropdown list to select the target club #}
-                <select class="form-select select_sy" required id="select_ziel" name="select_ziel">
-                    <option disabled selected>Ziel</option>
-                    {% for club in clubs %}
-                    <option value="{{club.id}}">{{club.id}} {{club.verein}}</option>
-                    {% endfor %}
-                </select>
+            <div class="col-sm-4 alert">
+                <h2 class="alert alert-info">Entscheidungsinformationen</h2>
+                <div class="not_show m-2 alert-info" id="entscheidung_content"></div>
             </div>
-
-            <div class="form-group">
-                {# Dropdown list to select the maximum distance #}
-                <select class="form-select select_sy" id="max_distance" required name="max_distance">
-                    <option disabled selected>Maximale Entfernung</option>
-                    {% for max__distance in range(100, 1800, 50) %}
-                    <option value="{{max__distance}}">{{max__distance}} KM</option>
-                    {% endfor %}
-                </select>
+            <div class="col-sm-4 ">
+                <h2 class="alert alert-info">Kartenuebersicht</h2>
+                <div class="m-2 alert alert-info" id="mapdiv"></div>
             </div>
-
-            <div class="form-group">
-                {# Dropdown list to select the budget #}
-                <select class="form-select select_sy" id="budget" name="budget">
-                    <option disabled selected>Budget</option>
-                    {% for bugg in range(100, 5000, 50) %}
-                    <option value="{{bugg}}">{{bugg}} Euro</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            {# Send button that calls the "sendFormData()" function when clicked #}
-            <button class="btn btn-primary" type="button" onclick="sendFormData()">GO GO GO ...</button>
-        </div>
-    </form>-->
-                {# Container to display decision information #}
-                <div class="col-md-8 alert alert-info not_show" id="entscheidung_content"></div>
-
-                {# Container to display the Bundesliga tree #}
-                <!--<div class="col-md-4">
-        <img src="../static/imags/bundesliga_baum.png" width="430" />
-    </div>-->
-            </div>
-           
         </div>
     </div>
+    {# Tips and links for further information #}
 
-    <div id="mapdiv"></div>
-    <div id="result"></div>
-
-    {# Table to display the clubs and their distances #}
-    <!--<table class="table">
-        <tr>
-            <th>Club</th>
-            <th>Distance</th>
-        </tr>
-        {% for club in clubs %}
-        <tr>
-            <td>{{club.verein}}</td>
-            <td>
-                {% for distance in club.distances %}
-                <p>{{distance.other.verein}} = {{distance.distance_in_km}} Km</p>
-                {% endfor %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>-->
-</div>
-{# Tips and links for further information #}
-
-{# Ends the content block #}
-{% endblock %}
+    {# Ends the content block #}
+    {% endblock %}
