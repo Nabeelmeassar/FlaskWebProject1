@@ -20,47 +20,48 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.ensemble import RandomForestRegressor
 from FlaskWebProject1.Classes.CSVFile import CSVFile
 from FlaskWebProject1.Classes.routePlanner import RoutePlanner
+from FlaskWebProject1.Classes.userPreferencePredictor import UserPreferencePredictor
 cities = {}
-@app.route('/postjson', methods=['POST'])
-def post_json_handler():
+# @app.route('/postjson', methods=['POST'])
+# def post_json_handler():
 
-    content = request.get_json()
-    start_vertex = int(content.get('select_start'))
-    target_vertex = int(content.get('select_ziel'))
-    max_distance = float(content.get('max_distance'))
-    budget = float(content.get('budget'))
+    # content = request.get_json()
+    # start_vertex = int(content.get('select_start'))
+    # target_vertex = int(content.get('select_ziel'))
+    # max_distance = float(content.get('max_distance'))
+    # budget = float(content.get('budget'))
 
-    # Call shortest_path and save the result
-    path = shortest_path(club_graph, start_vertex, target_vertex)
+    # # Call shortest_path and save the result
+    # path = shortest_path(club_graph, start_vertex, target_vertex)
 
-    distances, _ = calculate_distances(club_graph, start_vertex)  # Get the distances dictionary
-    coordinates = list(map(get_club_coordinates_and_city, path))
-    best_route = list(map(get_city_name, path))
-    # Gesamtroute erstellen
-    coordinates_with_names = {club.stadt: (club.lat, club.long) for club in clubs}
+    # distances, _ = calculate_distances(club_graph, start_vertex)  # Get the distances dictionary
+    # coordinates = list(map(get_club_coordinates_and_city, path))
+    # best_route = list(map(get_city_name, path))
+    # # Gesamtroute erstellen
+    # coordinates_with_names = {club.stadt: (club.lat, club.long) for club in clubs}
      
  
-    # Karte erstellen
-    football_map = Map().create_football_clubs_map(coordinates_with_names, routes, best_route)
-    # Konvertieren Sie die Karte in eine HTML-Zeichenkette
-    map_html = football_map._repr_html_()
-    # Get the distance of the shortest path
-    shortest_distance_km = distances[target_vertex]  # Ensure this distance is in kilometers
+    # # Karte erstellen
+    # football_map = Map().create_football_clubs_map(coordinates_with_names, routes, best_route)
+    # # Konvertieren Sie die Karte in eine HTML-Zeichenkette
+    # map_html = football_map._repr_html_()
+    # # Get the distance of the shortest path
+    # shortest_distance_km = distances[target_vertex]  # Ensure this distance is in kilometers
 
-    # Add all the new and processed data to the original content
-    content.update({
-        'start': club_dict[start_vertex].stadt,
-        'ziel': club_dict[target_vertex].stadt,
-        'max_distance': round(max_distance, 2),
-        'budget': budget,
-        'Kuerzester_Weg': list(map(get_club_name, path)),  # Convert club IDs to names
-        'Kuerzeste_Entfernung_km': round(shortest_distance_km, 2),
-        'm_html': map_html
+    # # Add all the new and processed data to the original content
+    # content.update({
+    #     'start': club_dict[start_vertex].stadt,
+    #     'ziel': club_dict[target_vertex].stadt,mnh
+    #     'max_distance': round(max_distance, 2),
+    #     'budget': budget,
+    #     'Kuerzester_Weg': list(map(get_club_name, path)),  # Convert club IDs to names
+    #     'Kuerzeste_Entfernung_km': round(shortest_distance_km, 2),
+    #     'm_html': map_html
 
-    })
+    # })
 
     # Return the modified content as JSON
-    return jsonify(content)
+    # return jsonify(content)
 
 @app.route('/post_preference_json', methods=['POST'])
 def post_preference_json_handler():
@@ -68,7 +69,9 @@ def post_preference_json_handler():
     content = request.get_json()
     Select_start = content.get('Select_start')
     Tage = int(content.get('Tage'))
-    city_with_rating, mse = predict_user_preferences(content, 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv')
+    csv_data_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv'
+    userPreferencePredictor = UserPreferencePredictor(csv_data_path, content)
+    city_with_rating, mse = userPreferencePredictor.predict_user_preferences()
 
     for city_name, rating in city_with_rating.items():  # Assuming city_with_rating is a dictionary
         city_id = get_city_id(city_name)  # Get the city ID using your function
@@ -177,31 +180,31 @@ def about():
     )
 
 
-def calculate_distances(graph, start_vertex):
-    distances = {vertex: float('infinity') for vertex in graph}
-    distances[start_vertex] = 0
-    predecessors = {vertex: None for vertex in graph}
-    pq = [(0, start_vertex)]
-    while len(pq) > 0:
-        current_distance, current_vertex = heapq.heappop(pq)
-        if current_distance > distances[current_vertex]:
-            continue
-        for neighbor, weight in graph[current_vertex].items():
-            distance = current_distance + weight
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                predecessors[neighbor] = current_vertex
-                heapq.heappush(pq, (distance, neighbor))
-    return distances, predecessors
+# def calculate_distances(graph, start_vertex):
+#     distances = {vertex: float('infinity') for vertex in graph}
+#     distances[start_vertex] = 0
+#     predecessors = {vertex: None for vertex in graph}
+#     pq = [(0, start_vertex)]
+#     while len(pq) > 0:
+#         current_distance, current_vertex = heapq.heappop(pq)
+#         if current_distance > distances[current_vertex]:
+#             continue
+#         for neighbor, weight in graph[current_vertex].items():
+#             distance = current_distance + weight
+#             if distance < distances[neighbor]:
+#                 distances[neighbor] = distance
+#                 predecessors[neighbor] = current_vertex
+#                 heapq.heappush(pq, (distance, neighbor))
+#     return distances, predecessors
 
-def shortest_path(graph, start_vertex, target_vertex):
-    distances, predecessors = calculate_distances(graph, start_vertex)
-    path = []
-    while target_vertex is not None:
-        path.append(target_vertex)
-        target_vertex = predecessors[target_vertex]
-    path = path[::-1]  
-    return path
+# def shortest_path(graph, start_vertex, target_vertex):
+#     distances, predecessors = calculate_distances(graph, start_vertex)
+#     path = []
+#     while target_vertex is not None:
+#         path.append(target_vertex)
+#         target_vertex = predecessors[target_vertex]
+#     path = path[::-1]  
+#     return path
 
 
 def get_club_name(club_id):
@@ -245,77 +248,77 @@ def calculate_distance(obj, other):
     return round((c * r), 2)
 
 
-# Funktion zum Laden und Vorbereiten der Daten
-def load_and_prepare_data(csv_file_path):
-    try:
-        data = pd.read_csv(csv_file_path)
-        X = data.drop('Bewertung', axis=1)
-        y = data['Bewertung']
-        return X, y
-    except FileNotFoundError as e:
-        print(f"Datei nicht gefunden: {e}")
-        return None, None
-    except KeyError as e:
-        print(f"Fehlende Spalte: {e}")
-        return None, None
-# Funktion zur Bewertung des Modells
-def evaluate_model(model, X_test, y_test):
-    predictions = model.predict(X_test)
-    mse = mean_squared_error(y_test, predictions)
-    print(f"Modell MSE: {mse}")
-    return mse
+# # Funktion zum Laden und Vorbereiten der Daten
+# def load_and_prepare_data(csv_file_path):
+#     try:
+#         data = pd.read_csv(csv_file_path)
+#         X = data.drop('Bewertung', axis=1)
+#         y = data['Bewertung']
+#         return X, y
+#     except FileNotFoundError as e:
+#         print(f"Datei nicht gefunden: {e}")
+#         return None, None
+#     except KeyError as e:
+#         print(f"Fehlende Spalte: {e}")
+#         return None, None
+# # Funktion zur Bewertung des Modells
+# def evaluate_model(model, X_test, y_test):
+#     predictions = model.predict(X_test)
+#     mse = mean_squared_error(y_test, predictions)
+#     print(f"Modell MSE: {mse}")
+#     return mse
 
-# Hauptfunktion fuer Vorhersagen
-def predict_user_preferences(new_user_preferences, csv_file_path):
-    X, y = load_and_prepare_data(csv_file_path)
-    if X is None or y is None:
-        return None
+# # Hauptfunktion fuer Vorhersagen
+# def predict_user_preferences(new_user_preferences, csv_file_path):
+#     X, y = load_and_prepare_data(csv_file_path)
+#     if X is None or y is None:
+#         return None
 
-    # Identifizieren kategorischer Spalten
-    categorical_features = ['Ziel']  # Beispiel, sollte angepasst werden
-    categorical_transformer = OneHotEncoder(handle_unknown='ignore')
+#     # Identifizieren kategorischer Spalten
+#     categorical_features = ['Ziel']  # Beispiel, sollte angepasst werden
+#     categorical_transformer = OneHotEncoder(handle_unknown='ignore')
 
-    # Erstellen des ColumnTransformers
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('cat', categorical_transformer, categorical_features),
-        ],
-        remainder='passthrough'
-    )
+#     # Erstellen des ColumnTransformers
+#     preprocessor = ColumnTransformer(
+#         transformers=[
+#             ('cat', categorical_transformer, categorical_features),
+#         ],
+#         remainder='passthrough'
+#     )
 
-    # Aufteilen in Trainings- und Testdaten
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    # Erstellen der Pipeline
-    pipeline = Pipeline(steps=[
-        ('preprocessor', preprocessor),
-        ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
-    ])
+#     # Aufteilen in Trainings- und Testdaten
+#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+#     # Erstellen der Pipeline
+#     pipeline = Pipeline(steps=[
+#         ('preprocessor', preprocessor),
+#         ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+#     ])
 
-    # Modell trainieren
-    pipeline.fit(X_train, y_train)
+#     # Modell trainieren
+#     pipeline.fit(X_train, y_train)
 
-    # Modell bewerten
-    model_mse = evaluate_model(pipeline, X_test, y_test)
+#     # Modell bewerten
+#     model_mse = evaluate_model(pipeline, X_test, y_test)
 
-    # Vorhersagen vorbereiten
-    predictions = {}
-    for city in X['Ziel'].unique():
-        city_data = X[X['Ziel'] == city]        
-        # Benutzerpraeferenzen aktualisieren
-        for feature, value in new_user_preferences.items():
-            if feature in city_data:
-                city_data[feature] = value
-        city_pred = pipeline.predict(city_data)[0]
-        predictions[city] = city_pred
+#     # Vorhersagen vorbereiten
+#     predictions = {}
+#     for city in X['Ziel'].unique():
+#         city_data = X[X['Ziel'] == city]        
+#         # Benutzerpraeferenzen aktualisieren
+#         for feature, value in new_user_preferences.items():
+#             if feature in city_data:
+#                 city_data[feature] = value
+#         city_pred = pipeline.predict(city_data)[0]
+#         predictions[city] = city_pred
 
-    # Sortieren der Vorhersagen
-    predictions = OrderedDict(sorted(predictions.items(), key=lambda x: x[1], reverse=True))
+#     # Sortieren der Vorhersagen
+#     predictions = OrderedDict(sorted(predictions.items(), key=lambda x: x[1], reverse=True))
 
-    # Vorhersagen ausgeben
-    for city, pred in predictions.items():
-        print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred} ")
+#     # Vorhersagen ausgeben
+#     for city, pred in predictions.items():
+#         print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred} ")
 
-    return predictions, model_mse
+#     return predictions, model_mse
 ############################################################################################
 # import pandas as pd
 # from sklearn.model_selection import train_test_split

@@ -72,14 +72,24 @@ function sendPreferenceFormData() {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var jsonResponse = JSON.parse(xhr.responseText);
             var cityRatings = jsonResponse.city_with_rating;
-            var html = '<ul>'; // Starten Sie mit einer ungeordneten Liste
-            for (var city in jsonResponse.city_score) {
-                if (jsonResponse.city_score.hasOwnProperty(city)) {
-                    var score = jsonResponse.city_score[city].score;
-                    html += '<li>' + city + ': ' + score + '</li>'; // Fügen Sie jedes Stadt-Score-Paar als Listenelement hinzu
-                }
-            }
-            html += '</ul>';
+            // Angenommen, Sie haben ein Objekt mit Städten als Schlüsseln und Scores als Werten.
+            var cityScores = jsonResponse.city_score
+            console.log(cityScores)
+            // Sortieren des Arrays in aufsteigender Reihenfolge nach dem Score-Wert
+            // Umwandlung des Objekts in ein Array von Objekten mit Stadtnamen und Score
+            var scoresArray = Object.keys(cityScores).map(function (city) {
+                return { city: city, score: cityScores[city].score };
+            });
+
+            // Sortieren des Arrays in aufsteigender Reihenfolge nach dem Score-Wert
+            scoresArray.sort(function (a, b) {
+                return a.score - b.score;
+            });
+            var html = '<ul>'; // Start with an unordered list
+            scoresArray.forEach(function (item) {
+                html += '<li>' + item.city + ': ' + item.score + '</li>'; // Add each city-score pair as a list item
+            });
+            html += '</ul>'; // Close the unordered list
             mymap.innerHTML = jsonResponse.route; 
             mymap.innerHTML += jsonResponse.m_html; // Assuming 'mymap' is a valid DOM element.
             mymap.innerHTML += 'Die Funktion `calculate_score` berechnet einen Punktwert für eine Stadt. Dieser Wert hängt davon ab, wie gut die Stadt bewertet ist und wie weit sie von einer anderen Stadt entfernt ist. Je besser die Bewertung und je näher die Stadt, desto höher der Punktwert.'; 

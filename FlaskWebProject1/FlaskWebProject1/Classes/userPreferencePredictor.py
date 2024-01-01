@@ -8,9 +8,11 @@ from sklearn.metrics import mean_squared_error
 from collections import OrderedDict
 
 class UserPreferencePredictor:
-    def __init__(self, csv_file_path):
+    def __init__(self, csv_file_path, new_user_preferences):
         self.csv_file_path = csv_file_path
+        self.new_user_preferences = new_user_preferences
         
+    # Funktion zum Laden und Vorbereiten der Daten
     def load_and_prepare_data(self):
         try:
             data = pd.read_csv(self.csv_file_path)
@@ -24,16 +26,17 @@ class UserPreferencePredictor:
             print(f"Fehlende Spalte: {e}")
             return None, None
 
-    def evaluate_model(self):
-        predictions = self.pipeline.predict(self.X_test)
-        mse = mean_squared_error(self.y_test, predictions)
-        print(f"Modell MSE: {mse}")
-        return mse
+    # Hauptfunktion fuer Vorhersagen
+    def predict_user_preferences(self):
+        X, y = self.load_and_prepare_data()
+        if X is None or y is None:
+            return None
 
-    def train_model(self, X_train, y_train):
+        # Identifizieren kategorischer Spalten
         categorical_features = ['Ziel']  # Beispiel, sollte angepasst werden
         categorical_transformer = OneHotEncoder(handle_unknown='ignore')
 
+        # Erstellen des ColumnTransformers
         preprocessor = ColumnTransformer(
             transformers=[
                 ('cat', categorical_transformer, categorical_features),
@@ -41,35 +44,38 @@ class UserPreferencePredictor:
             remainder='passthrough'
         )
 
-        self.pipeline = Pipeline(steps=[
+        # Aufteilen in Trainings- und Testdaten
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        # Erstellen der Pipeline
+        pipeline = Pipeline(steps=[
             ('preprocessor', preprocessor),
             ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
         ])
 
-        self.pipeline.fit(X_train, y_train)
+        # Modell trainieren
+        pipeline.fit(X_train, y_train)
 
-    def predict_user_preferences(self, new_user_preferences):
-        X, y = self.load_and_prepare_data()
-        if X is None or y is None:
-            return None
+        # Modell bewerten
+        predictions = pipeline.predict(X_test)
+        model_mse = mean_squared_error(y_test, predictions)
+        
 
-        X_train, self.X_test, y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        self.train_model(X_train, y_train)
-
-        mse = self.evaluate_model()
-
+        # Vorhersagen vorbereiten
         predictions = {}
         for city in X['Ziel'].unique():
-            city_data = X[X['Ziel'] == city].copy()
-            for feature, value in new_user_preferences.items():
+            city_data = X[X['Ziel'] == city]        
+            # Benutzerpraeferenzen aktualisieren
+            for feature, value in self.new_user_preferences.items():
                 if feature in city_data:
                     city_data[feature] = value
-            city_pred = self.pipeline.predict(city_data)[0]
+            city_pred = pipeline.predict(city_data)[0]
             predictions[city] = city_pred
-
+        
+        # Sortieren der Vorhersagen
         predictions = OrderedDict(sorted(predictions.items(), key=lambda x: x[1], reverse=True))
 
+        # Vorhersagen ausgeben
         for city, pred in predictions.items():
-            print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred}")
+            print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred} ")
 
-        return predictions, mse
+        return predictions, model_mse
