@@ -1,9 +1,8 @@
 """
 Routes and views for the flask application.
 """
-import json
+from cmath import asin
 import heapq
-import folium
 import pandas as pd
 from email import message
 from turtle import distance
@@ -11,7 +10,7 @@ from FlaskWebProject1 import app
 from flask import request, jsonify
 from math import radians, sin, cos, sqrt
 from sklearn.metrics import mean_squared_error
-from flask import json, render_template, request
+from flask import render_template, request
 from sklearn.model_selection import train_test_split
 from datetime import datetime
 from collections import OrderedDict

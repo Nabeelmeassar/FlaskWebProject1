@@ -10,9 +10,6 @@ from collections import OrderedDict
 class UserPreferencePredictor:
     def __init__(self, csv_file_path):
         self.csv_file_path = csv_file_path
-        self.pipeline = None
-        self.X_test = None
-        self.y_test = None
         
     def load_and_prepare_data(self):
         try:

@@ -1,5 +1,6 @@
 import heapq
 import json
+import math
 import folium
 from math import radians, cos, sin, asin, sqrt
 
@@ -22,14 +23,23 @@ class RoutePlanner:
         c = 2 * asin(sqrt(a))
         r = 6371  # Radius of Earth in kilometers
         return c * r
-
+    
     def calculate_score(self, city, current_city):
         rating = self.cities[city]['rating']
         distance = self.haversine(
             self.cities[city]['GPS'][1], self.cities[city]['GPS'][0],
             self.cities[current_city]['GPS'][1], self.cities[current_city]['GPS'][0]
         )
-        return rating / distance
+
+        # Exponentielles Gewicht für das Rating und logarithmische Skalierung für die Entfernung.
+        rating_exponent = 2
+        weighted_rating = rating ** rating_exponent
+    
+        log_distance = math.log(distance + 1)
+
+        # Berechnen des kombinierten gewichteten Scores.
+        score = weighted_rating / log_distance
+        return score
 
     def best_first_search(self, start):
         visited = set()
