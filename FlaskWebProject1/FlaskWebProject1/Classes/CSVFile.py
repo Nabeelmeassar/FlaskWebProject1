@@ -54,5 +54,6 @@ class CSVFile:
                for row in reader:
                 stadion = Stadion(int(row[0]), row[1], row[2], row[3], float(row[4]), float(row[5]), row[6], row[7], row[8], row[9], row[10].split(";"))                
                 stadienen.append(stadion)
-        return stadienen    
+        return stadienen
+    
         

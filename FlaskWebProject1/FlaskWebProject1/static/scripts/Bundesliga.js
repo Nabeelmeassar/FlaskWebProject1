@@ -77,23 +77,28 @@ function sendPreferenceFormData() {
             console.log(cityScores)
             // Sortieren des Arrays in aufsteigender Reihenfolge nach dem Score-Wert
             // Umwandlung des Objekts in ein Array von Objekten mit Stadtnamen und Score
-            var scoresArray = Object.keys(cityScores).map(function (city) {
-                return { city: city, score: cityScores[city].score };
-            });
+            //var scoresArray = Object.keys(cityScores).map(function (city) {
+            //    return { city: city, score: cityScores[city].score };
+            //});
 
-            // Sortieren des Arrays in aufsteigender Reihenfolge nach dem Score-Wert
-            scoresArray.sort(function (a, b) {
-                return a.score - b.score;
-            });
-            var html = '<ul>'; // Start with an unordered list
-            scoresArray.forEach(function (item) {
-                html += '<li>' + item.city + ': ' + item.score + '</li>'; // Add each city-score pair as a list item
-            });
-            html += '</ul>'; // Close the unordered list
+            //// Sortieren des Arrays in absteigender Reihenfolge nach dem Score-Wert
+            //scoresArray.sort(function (a, b) {
+            //    return b.score - a.score;
+            //});
+
+            //var html = '<ul>'; // Start with an unordered list
+            //scoresArray.forEach(function (item) {
+            //    html += '<li>' + item.city + ': ' + item.score.toFixed(2) + '</li>'; // Add each city-score pair as a list item
+            //});
+            //html += '</ul>'; // Close the unordered list
+
             mymap.innerHTML = jsonResponse.route; 
+            mymap.innerHTML += '   Gesamtkosten = ' + jsonResponse.total_price+ ' Euro'; 
+            console.log(jsonResponse.total_price)
+            console.log(jsonResponse)
             mymap.innerHTML += jsonResponse.m_html; // Assuming 'mymap' is a valid DOM element.
-            mymap.innerHTML += 'Die Funktion `calculate_score` berechnet einen Punktwert für eine Stadt. Dieser Wert hängt davon ab, wie gut die Stadt bewertet ist und wie weit sie von einer anderen Stadt entfernt ist. Je besser die Bewertung und je näher die Stadt, desto höher der Punktwert.'; 
-            mymap.innerHTML += html; 
+            //mymap.innerHTML += 'Die Funktion `calculate_score` berechnet einen Punktwert für eine Stadt. Dieser Wert hängt davon ab, wie gut die Stadt bewertet ist und wie weit sie von einer anderen Stadt entfernt ist. Je besser die Bewertung und je näher die Stadt, desto höher der Punktwert.'; 
+            //mymap.innerHTML += html; 
 
             // Convert object to an array of [city, rating] pairs
             var ratingsArray = [];
@@ -109,13 +114,14 @@ function sendPreferenceFormData() {
             });
 
             // Start building the HTML string for a table
-            alert('Der mittlere quadratische Fehler (Mean Squared Error, MSE) ist eine Metrik zur Beurteilung der Qualität eines Regressionsmodells. MSE=n1​∑i=1n​(yi​−y^​i​)2 = ' + jsonResponse.mse + ' city_score ' + jsonResponse.city_score)
+            //alert('Der mittlere quadratische Fehler (Mean Squared Error, MSE) ist eine Metrik zur Beurteilung der Qualität eines Regressionsmodells. MSE=n1​∑i=1n​(yi​−y^​i​)2 = ' + jsonResponse.mse + ' city_score ' + jsonResponse.city_score)
             console.log(jsonResponse.city_score)
+            console.log(jsonResponse)
             var htmlContent = '' 
             htmlContent += '<table class="table">'; // Add border for visibility
 
             // Add table headers
-            htmlContent += '<tr><th>Plaz</th><th>ID</th><th>Stadt</th><th>Bewertung</th><th>GPS</th></tr>';
+            htmlContent += '<tr><th>Plaz</th><th>ID</th><th>Stadt</th><th>Bewertung</th><th>Hotelkosten</th><th>Ticketkosten</th></tr>';
 
             // Loop through the sorted array and add rows to the table
             for (let i = 0; i < ratingsArray.length; i++) {
@@ -123,11 +129,11 @@ function sendPreferenceFormData() {
                 var cityData = cityRatings[city]; // Access the city data
                 htmlContent += '<tr>';
                 htmlContent += '<td>' + (i + 1) + '</td>'; // Count, i starts from 0, hence (i + 1).
-                htmlContent += '<td>' + cityData.ID + '</td>'; // City ID
+                htmlContent += '<td>' + cityData.id + '</td>'; // City ID
                 htmlContent += '<td>' + city + '</td>'; // City Name
                 htmlContent += '<td>' + cityData.rating.toFixed(2) + '</td>'; // Rating
-                htmlContent += '<td>' + cityData.GPS + '</td>'; // GPS Coordinates, changed 'club_coordinate' to 'gps'
-                //htmlContent += '<td>' + jsonResponse.city_score[city].score.toFixed(2) + '</td>';
+                htmlContent += '<td>' + cityData.hotel_cost + ' €</td>';
+                htmlContent += '<td>' + cityData.ticket_cost + ' €</td>';
                 htmlContent += '</tr>';
             }
 
@@ -152,7 +158,8 @@ function sendPreferenceFormData() {
         'Person_Entertainment_Fussballfan': formData.get('Person_Entertainment_Fussballfan'),
         'Person_Traditionsfussballfan': formData.get('Person_Traditionsfussballfan'),
         'Person_Schnaeppchenjaeger': formData.get('Person_Schnaeppchenjaeger'),
-        'Partygaenger': formData.get('Partygaenger')
+        'Partygaenger': formData.get('Partygaenger'),
+        'Gewicht': formData.get('bewertung_gewicht'),
     };
 
     // Send the JSON string to the server

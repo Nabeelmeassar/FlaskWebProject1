@@ -1,16 +1,52 @@
-# Definition der Klasse City
+# Importiere die Bibliothek geopy, um die Distanz zu berechnen
+import csv
+from geopy.distance import geodesic
+# Eine Klasse, die die Informationen über eine Stadt speichert
 class City:
-    # Die __init__ Methode ist der Konstruktor der Klasse. 
-    # Sie wird aufgerufen, wenn ein neues Objekt dieser Klasse erstellt wird.
-    def __init__(self, name, lat, lon, country, population):
-        self.name = name  # Der Name der Stadt
-        self.lat = lat  # Der Breitengrad der Stadt
-        self.lon = lon  # Der Längengrad der Stadt
-        self.country = country  # Das Land, in dem sich die Stadt befindet
-        self.population = population  # Die Bevölkerungszahl der Stadt
+    cities = {}
+    def __init__(self,id, name, gps, rating, hotel_cost, ticket_cost):
+        self.name = name
+        self.id = id
+        self.gps = gps # Ein Tupel aus (latitude, longitude)
+        self.rating = rating
+        self.hotel_cost = float(hotel_cost) # Pro Nacht
+        self.ticket_cost = float(ticket_cost)# Pro Spiel
+    def to_dict(self):
+        # Convert the City object to a dictionary
+        return {
+            'id': self.id,
+            'name': self.name,
+            'gps': self.gps,
+            'rating': self.rating,
+            'hotel_cost': self.hotel_cost,
+            'ticket_cost': self.ticket_cost
+        }
+        
+    def update_hotel_cost(self, new_hotel_cost):
+        self.hotel_cost = float(new_hotel_cost)
 
-    # Die __str__ Methode wird aufgerufen, wenn das Objekt in einen String umgewandelt wird.
-    # Sie gibt eine lesbare Darstellung des Objekts zurück.
-    def __str__(self):
-        # Verwendung von f-Strings für eine einfache Formatierung
-        return f'{self.name}, {self.country} ({self.lat}, {self.lon}): {self.population} Einwohner'
+    def update_ticket_cost(self, new_ticket_cost):
+        self.ticket_cost = float(new_ticket_cost)
+
+    def update_rating(self, new_rating):
+        self.rating = new_rating
+        
+    def get_hotel_tick_cost(self):
+        cost = self.hotel_cost + self.ticket_cost
+        return cost
+    
+def get_cities():
+    cities = {} 
+    # Schritt 2: Öffnen der CSV-Datei und Erstellen von City-Objekten
+    csv_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\clubs.csv'
+    with open(csv_path, newline='', encoding='utf-8-sig') as csvfile:
+        reader = csv.reader(csvfile)
+        # next(reader)  # Überspringen Sie die Kopfzeile, falls vorhanden
+        # Schritt 3: Erstellen von City-Objekten und Hinzufügen zur Liste
+        for row in reader:
+            # Angenommen, jede Zeile hat Stadtname, Bevölkerung und Land in dieser Reihenfolge
+            city = City(row[0], row[1],(row[4],row[5]),0 , row[6], row[7])
+            cities[city.name] = city
+    return cities
+
+

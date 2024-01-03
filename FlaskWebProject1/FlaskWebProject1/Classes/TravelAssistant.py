@@ -7,18 +7,19 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_squared_error
 from collections import OrderedDict
 
-class UserPreferencePredictor:
-    def __init__(self, csv_file_path, new_user_preferences):
+class TravelAssistant:
+    def __init__(self, csv_file_path, new_user_preferences, cities):
         self.csv_file_path = csv_file_path
         self.new_user_preferences = new_user_preferences
+        self.cities = cities
         
     # Funktion zum Laden und Vorbereiten der Daten
     def load_and_prepare_data(self):
         try:
             data = pd.read_csv(self.csv_file_path)
-            X = data.drop('Bewertung', axis=1)
-            y = data['Bewertung']
-            return X, y
+            features = data.drop('Bewertung', axis=1)
+            labels = data['Bewertung']
+            return features, labels
         except FileNotFoundError as e:
             print(f"Datei nicht gefunden: {e}")
             return None, None
@@ -77,5 +78,7 @@ class UserPreferencePredictor:
         # Vorhersagen ausgeben
         for city, pred in predictions.items():
             print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred} ")
+            if self.cities[city].name == city:
+                self.cities[city].update_rating(pred)
 
-        return predictions, model_mse
+        return self.cities, model_mse

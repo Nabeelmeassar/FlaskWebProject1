@@ -16,17 +16,17 @@
                             {# Dropdown list to select the start city #}
                             <select class="form-select select_sy" required id="select_start" name="select_start">
                                 {# Loop through the list of clubs and add them as options #}
-                                {% for club in clubs %}
-                                <option value="{{club.stadt}}">{{club.id}} {{club.stadt}}</option>
+                                {% for city_key, city_obj in cities.items():%}
+                                <option value="{{city_key}}">{{city_obj.id}} {{city_key}}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div>
-                            <label for="tage">Anzahl freie Tage :</label>
+                            <label for="tage">Reisedauer in Tagen :</label>
                         </div>
                         <div>
                             <select class="form-select select_sy" id="tage" name="tage">
-                                {% for tage in range(1, 19, 1) %}
+                                {% for tage in range(5, 19, 3) %}
                                 <option value="{{tage}}">{{tage}}</option>
                                 {% endfor %}
                             </select>
@@ -36,7 +36,7 @@
                         </div>
                         <div>
                             <select class="form-select select_sy" id="budget" name="Person_Budget">
-                                {% for bug in range(100, 5000, 50) %}
+                                {% for bug in range(500, 2000, 50) %}
                                 <option value="{{bug}}">{{bug}} Euro</option>
                                 {% endfor %}
                             </select>
@@ -90,8 +90,19 @@
                             <label class="form-check-label" for="partygaengerNein">Nein</label>
                         </div>
                         <div>
+                            <label for="bewertung_gewicht">Feedback :</label>
+                        </div>
+                        <div>
+                            <select class="form-select select_sy" id="bewertung_gewicht" name="bewertung_gewicht">
+                                <option value="3">-</option>
+                                <option value="0">kuerzerer Weg</option>
+                                <option value="10">Stadt Bewertung ist mir wichtig</option>
+                            </select>
+                        </div>
+                        <br />
+                        <div class="m-2">
                             <!-- Send button that calls the "sendPreferenceFormData()" function when clicked -->
-                            <button class="btn btn-primary m-5" type="button" onclick="sendPreferenceFormData()">GO GO GO ..</button>
+                            <button class="btn btn-primary" type="button" onclick="sendPreferenceFormData()">GO GO GO ..</button>
                         </div>
                         <div id="city_score">
                         </div>
@@ -100,11 +111,11 @@
             </div>
             <div class="col-sm-4 alert">
                 <h2 class="alert alert-info">Entscheidungsinformationen</h2>
-                <div class="not_show m-2 alert-info" id="entscheidung_content"></div>
+                <div class="not_show m-2 alert alert-info" id="entscheidung_content"></div>
             </div>
             <div class="col-sm-4 ">
                 <h2 class="alert alert-info">Kartenuebersicht</h2>
-                <div class="m-2 alert alert-info" id="mapdiv"></div>
+                <div class="m-2 alert alert-info " id="mapdiv"></div>
             </div>
         </div>
     </div>
