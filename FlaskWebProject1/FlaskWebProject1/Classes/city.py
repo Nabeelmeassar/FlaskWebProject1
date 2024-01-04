@@ -38,7 +38,7 @@ class City:
 def get_cities():
     cities = {} 
     # Schritt 2: Öffnen der CSV-Datei und Erstellen von City-Objekten
-    csv_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\clubs.csv'
+    csv_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\cities.csv'
     with open(csv_path, newline='', encoding='utf-8-sig') as csvfile:
         reader = csv.reader(csvfile)
         # next(reader)  # Überspringen Sie die Kopfzeile, falls vorhanden

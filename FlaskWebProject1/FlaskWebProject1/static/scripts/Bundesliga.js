@@ -65,7 +65,6 @@ function sendPreferenceFormData() {
     var entscheidungContentElement = document.getElementById('entscheidung_content');
     var mymap = document.getElementById('mapdiv');
     var city_score_div = document.getElementById('city_score');
-    entscheidungContentElement.style.visibility = 'visible';
     entscheidungContentElement.innerHTML = '';
 
     xhr.onreadystatechange = function () {
@@ -75,32 +74,14 @@ function sendPreferenceFormData() {
             // Angenommen, Sie haben ein Objekt mit Städten als Schlüsseln und Scores als Werten.
             var cityScores = jsonResponse.city_score
             console.log(cityScores)
-            // Sortieren des Arrays in aufsteigender Reihenfolge nach dem Score-Wert
-            // Umwandlung des Objekts in ein Array von Objekten mit Stadtnamen und Score
-            //var scoresArray = Object.keys(cityScores).map(function (city) {
-            //    return { city: city, score: cityScores[city].score };
-            //});
-
-            //// Sortieren des Arrays in absteigender Reihenfolge nach dem Score-Wert
-            //scoresArray.sort(function (a, b) {
-            //    return b.score - a.score;
-            //});
-
-            //var html = '<ul>'; // Start with an unordered list
-            //scoresArray.forEach(function (item) {
-            //    html += '<li>' + item.city + ': ' + item.score.toFixed(2) + '</li>'; // Add each city-score pair as a list item
-            //});
-            //html += '</ul>'; // Close the unordered list
-
-            mymap.innerHTML = jsonResponse.route; 
+            mymap.innerHTML = '<h2>Kartenuebersicht</h2>'; 
+            mymap.innerHTML += jsonResponse.route; 
             mymap.innerHTML += '   Gesamtkosten = ' + jsonResponse.total_price+ ' Euro'; 
             console.log(jsonResponse.total_price)
             console.log(jsonResponse)
-            mymap.innerHTML += jsonResponse.m_html; // Assuming 'mymap' is a valid DOM element.
-            //mymap.innerHTML += 'Die Funktion `calculate_score` berechnet einen Punktwert für eine Stadt. Dieser Wert hängt davon ab, wie gut die Stadt bewertet ist und wie weit sie von einer anderen Stadt entfernt ist. Je besser die Bewertung und je näher die Stadt, desto höher der Punktwert.'; 
-            //mymap.innerHTML += html; 
+            mymap.innerHTML += jsonResponse.m_html;
+            mymap.style.visibility = 'visible';
 
-            // Convert object to an array of [city, rating] pairs
             var ratingsArray = [];
             for (var city in cityRatings) {
                 if (cityRatings.hasOwnProperty(city)) {
@@ -117,7 +98,7 @@ function sendPreferenceFormData() {
             //alert('Der mittlere quadratische Fehler (Mean Squared Error, MSE) ist eine Metrik zur Beurteilung der Qualität eines Regressionsmodells. MSE=n1​∑i=1n​(yi​−y^​i​)2 = ' + jsonResponse.mse + ' city_score ' + jsonResponse.city_score)
             console.log(jsonResponse.city_score)
             console.log(jsonResponse)
-            var htmlContent = '' 
+            var htmlContent = '<h2>Entscheidungsinformationen</h2>' 
             htmlContent += '<table class="table">'; // Add border for visibility
 
             // Add table headers
@@ -142,6 +123,8 @@ function sendPreferenceFormData() {
 
             // Assuming 'entscheidungContentElement' is a valid DOM element.
             entscheidungContentElement.innerHTML = htmlContent;
+            entscheidungContentElement.style.visibility = 'visible';
+
         }
     };
 

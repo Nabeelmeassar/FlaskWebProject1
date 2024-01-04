@@ -2,7 +2,6 @@ import heapq
 import json
 import math
 import folium
-from math import radians, cos, sin, asin, sqrt
 
 from geopy.distance import geodesic
 class TravelPlanner:
@@ -65,14 +64,16 @@ class TravelPlanner:
         ).add_to(football_map)
         # Hinzufügen von Markern für jede Stadt in der Route
         for index, city in enumerate(route):
-            index = index + 1
-            if city in self.coordinates_with_names:
-                coords = self.coordinates_with_names[city]
+            if city in self.cities:
+                coords = self.cities[city].gps
+                rating = self.cities[city].rating
                 folium.Marker(
                     location=coords,
-                    tooltip=f'{index} - {city}',
+                    tooltip=f'{index} - {city}, Bewertung = {round(rating,2)}',
                     icon=folium.Icon(icon=f'futbol', prefix='fa', color='red')
                 ).add_to(football_map)
+            index = index + 1
+
 
         # Correct the creation of route coordinates
         route_coords = [tuple(map(float, self.cities[city].gps)) for city in route if city in self.cities]

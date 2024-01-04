@@ -121,8 +121,6 @@ def calculate_total_price(route_, budget):
         if city_name in cities:  # Prüfen Sie, ob der Stadtname ein Schlüssel im cities Dictionary ist
             route.append(cities[city_name])  # Fügen Sie das City-Objekt zur Liste r hinzu
     for city in route:
-        # Hier wird angenommen, dass `city` bereits ein City-Objekt ist, und
-        # dass dieses Objekt Attribute für hotel_cost und ticket_cost hat.
         current_hotel_cost = float(city.hotel_cost)
         current_ticket_cost = float(city.ticket_cost)
         current_total_cost = current_hotel_cost + current_ticket_cost
