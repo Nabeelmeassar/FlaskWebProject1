@@ -22,13 +22,12 @@
                             </select>
                         </div>
                         <div>
-                            <label for="tage">Reisedauer in Tagen :</label>
+                            <label for="tage">Reisedauer :</label>
                         </div>
                         <div>
                             <select class="form-select select_sy" id="tage" name="tage">
-                                {% for tage in range(5, 19, 3) %}
-                                <option value="{{tage}}">{{tage}}</option>
-                                {% endfor %}
+                                <option value="7">Eine Wochen</option>
+                                <option value="14">Zwei Wochen</option>
                             </select>
                         </div>
                         <div>
@@ -99,6 +98,12 @@
                                 <option value="10">Stadt Bewertung ist mir wichtig</option>
                             </select>
                         </div>
+                        <div>
+                            <select class="form-select select_sy" id="preis_hoch" name="preis_hoch">
+                                <option value="0">-</option>
+                                <option value="1">Preis ist zu Hoch!</option>
+                            </select>
+                        </div>
                         <br />
                         <div class="m-2">
                             <!-- Send button that calls the "sendPreferenceFormData()" function when clicked -->
@@ -115,7 +120,7 @@
             </div>
             <div class="col">
                 <!--<h2 class="alert alert-info">Entscheidungsinformationen</h2>-->
-                <div class="not_show m-2" id="entscheidung_content"></div>
+                <div class="not_show m-2 container" id="entscheidung_content"></div>
             </div>
         </div>
     </div>

@@ -1,63 +1,4 @@
-﻿function sendFormData() {
-    var xhr = new XMLHttpRequest();
-
-    xhr.open("POST", '/postjson', true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    var formElement = document.getElementById('myForm');
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var jsonArray = JSON.parse(xhr.responseText);
-            console.log(jsonArray); // Prints the received JSON data to the console
-
-            // Here you can process the data and use it in your application
-            var processedData = {
-                'Startstadt': jsonArray.start,
-                'Zielstadt': jsonArray.ziel,
-                'Max Entfernung ': jsonArray.max_distance + ' Km',
-                'budget': jsonArray.budget,
-                'Kuerzeste Entfernung in km': jsonArray.Kuerzeste_Entfernung_km + ' Km',
-                'Kuerzester Weg': jsonArray.Kuerzester_Weg,
-            };
-
-            console.log(processedData); // Output the processed data to the console
-            // Use 'processedData' in your application as needed
-            // Convert 'processedData' to a string and set it as the innerHTML of the element with the ID 'entscheidung_content'
-            // Get the element with the ID 'entscheidung_content'
-            var entscheidungContentElement = document.getElementById('entscheidung_content');
-            var mymap = document.getElementById('mapdiv');
-
-            entscheidungContentElement.style.visibility = 'visible';
-            entscheidungContentElement.innerHTML = '';
-            mymap.innerHTML = jsonArray.m_html;
-            // Go through all properties in 'processedData'
-            Object.keys(processedData).forEach(function (key) {
-                // Create a new <p> element
-                var newParagraph = document.createElement('p');
-
-                // Set the content of the new paragraph
-                newParagraph.textContent = key + ': ' + processedData[key];
-
-                // Append the new paragraph to the 'entscheidung_content' element
-                entscheidungContentElement.appendChild(newParagraph);
-            });
-        }
-    };
-
-    var formData = new FormData(formElement); // Assuming 'formElement' is a reference to your form
-
-    var data = {
-        'select_start': formData.get('select_start'),
-        'select_ziel': formData.get('select_ziel'),
-        'wochentag': formData.get('wochentag'),
-        'bevorzugtes_wetter': formData.get('bevorzugtes_wetter'),
-        'max_distance': formData.get('max_distance'),
-        'budget': formData.get('budget')
-    };
-
-    xhr.send(JSON.stringify(data));
-}
-function sendPreferenceFormData() {
+﻿function sendPreferenceFormData() {
     var xhr = new XMLHttpRequest();
 
     xhr.open("POST", '/post_preference_json', true);
@@ -76,7 +17,7 @@ function sendPreferenceFormData() {
             console.log(cityScores)
             mymap.innerHTML = '<h2>Kartenuebersicht</h2>'; 
             mymap.innerHTML += jsonResponse.route; 
-            mymap.innerHTML += '   Gesamtkosten = ' + jsonResponse.total_price+ ' Euro'; 
+            mymap.innerHTML += '<h3 class = "alert alert-primary">Gesamtkosten = ' + jsonResponse.total_price + ' €  </h3>'; 
             console.log(jsonResponse.total_price)
             console.log(jsonResponse)
             mymap.innerHTML += jsonResponse.m_html;
@@ -102,29 +43,50 @@ function sendPreferenceFormData() {
             htmlContent += '<table class="table">'; // Add border for visibility
 
             // Add table headers
-            htmlContent += '<tr><th>Plaz</th><th>ID</th><th>Stadt</th><th>Bewertung</th><th>Hotelkosten</th><th>Ticketkosten</th></tr>';
-
+            htmlContent += '<tr><th>Plaz</th><th>ID</th><th>Stadt</th><th>Bewertung</th><th>Hotelkosten</th><th>Ticketkosten</th><th>Fahrtkosten</th><th>Gesamtkosten</th><th>KM</th></tr>';
+            var startCity = data.Select_start 
+            var dista_in_km = 0 
             // Loop through the sorted array and add rows to the table
             for (let i = 0; i < ratingsArray.length; i++) {
                 var city = ratingsArray[i][0];
                 var cityData = cityRatings[city]; // Access the city data
+                dista_in_km += cityData.distance_km
                 htmlContent += '<tr>';
                 htmlContent += '<td>' + (i + 1) + '</td>'; // Count, i starts from 0, hence (i + 1).
                 htmlContent += '<td>' + cityData.id + '</td>'; // City ID
-                htmlContent += '<td>' + city + '</td>'; // City Name
-                htmlContent += '<td>' + cityData.rating.toFixed(2) + '</td>'; // Rating
+                if (startCity == city)
+                    htmlContent += '<td class ="text-success bold"> Start ' + city + '</td>'; // City Name
+                else
+                    htmlContent += '<td>' + city + '</td>'; // City Name
+                htmlContent += '<td>' + cityData.rating.toFixed(2) +' <br />'+ createStars(cityData.rating.toFixed(0)) + '</td>'; // Rating
                 htmlContent += '<td>' + cityData.hotel_cost + ' €</td>';
                 htmlContent += '<td>' + cityData.ticket_cost + ' €</td>';
+                if (cityData.driving_cost != 0.0) {
+                    htmlContent += '<td>' + cityData.driving_cost.toFixed(2) + ' €</td>';
+                    if (startCity == city) {
+                        var cost = cityData.driving_cost
+                    } else {
+                        var cost = cityData.hotel_cost + cityData.ticket_cost + cityData.driving_cost
+                    }
+                    htmlContent += '<td>' + cost.toFixed(2) + ' €</td>';
+                    htmlContent += '<td>' + cityData.distance_km.toFixed(2) + ' Km</td>';
+                } else {
+                    htmlContent += '<td>-€</td>';
+                    htmlContent += '<td>-€</td>';
+                    htmlContent += '<td>-</td>';
+                }
+
                 htmlContent += '</tr>';
             }
 
             // Close the table tag
             htmlContent += '</table>';
+            mymap.innerHTML += '<h3 class = "alert">Gesamtdistanz = ' + dista_in_km.toFixed(2) + ' Km  </h3>';
+            alert(dista_in_km.toFixed(2) + 'km')
 
             // Assuming 'entscheidungContentElement' is a valid DOM element.
             entscheidungContentElement.innerHTML = htmlContent;
             entscheidungContentElement.style.visibility = 'visible';
-
         }
     };
 
@@ -143,8 +105,26 @@ function sendPreferenceFormData() {
         'Person_Schnaeppchenjaeger': formData.get('Person_Schnaeppchenjaeger'),
         'Partygaenger': formData.get('Partygaenger'),
         'Gewicht': formData.get('bewertung_gewicht'),
+        'Preis_hoch': formData.get('preis_hoch'),
     };
 
     // Send the JSON string to the server
     xhr.send(JSON.stringify(data));
+}
+function createStars(rating) {
+    // Definieren Sie die maximale Anzahl von Sternen
+    const maxStars = 5;
+    let starsHTML = '';
+
+    // Fügen Sie gefüllte Sterne hinzu, basierend auf der Bewertung
+    for (let i = 0; i < rating; i++) {
+        starsHTML += '&#9733;'; // Gefüllter Stern
+    }
+
+    // Fügen Sie leere Sterne hinzu, um die maximale Anzahl zu erreichen
+    for (let i = rating; i < maxStars; i++) {
+        starsHTML += '&#9734;'; // Leerstern
+    }
+
+    return starsHTML;
 }

@@ -13,7 +13,7 @@ class TravelPlanner:
         
     def calculate_heuristic(self, city_name):
         # Berechne die Heuristik basierend auf Kosten
-        cost = self.cities[city_name].get_hotel_tick_cost()
+        cost = self.cities[city_name].get_cost()
         cost_factor = max(0, (self.budget - cost) / self.budget)
         return cost_factor
 

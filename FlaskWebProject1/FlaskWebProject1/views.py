@@ -13,6 +13,8 @@ from FlaskWebProject1.Classes.TravelPlanner import TravelPlanner
 
 
 cities = get_cities()
+csv_data_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv'
+
 @app.route('/post_preference_json', methods=['POST'])
 
 def post_preference_json_handler():
@@ -22,19 +24,18 @@ def post_preference_json_handler():
     tage = int(content.get('Tage'))
     gewicht = int(content.get('Gewicht'))
     budget = int(content.get('Person_Budget'))
-    csv_data_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\data.csv'
+    preis_hoch = int(content.get('Preis_hoch'))
     travelAssistant = TravelAssistant(csv_data_path, content, cities )
     city_with_rating, mse = travelAssistant.predict_user_preferences()
+    if preis_hoch == 1:
+        content.update({'budget': budget - 200})
+        budget -= 200  # Verringere das Budget
+        travelAssistant = TravelAssistant(csv_data_path, content, cities )
+        city_with_rating, mse = travelAssistant.predict_user_preferences()
     travelPlanner = TravelPlanner(cities, gewicht, budget )
     routes = travelPlanner.best_first_search(select_start)
     route = {city.id: city for city in cities.values() if city.name in routes}
-   
     total_price, new_route = calculate_total_price(routes, budget)
-    
-    totel_rating = {}
-    for city in cities.items():
-        totel_rating[city] = calculate_heuristic(city, budget )
-    print("Komplette Route: ", routes)
     # Karte erstellen
     football_map = travelPlanner.create_rout_map(new_route)
     cities_serializable = {city_name: city_obj.to_dict() for city_name, city_obj in cities.items()}
@@ -80,32 +81,6 @@ def about():
         message='Your application description page.'
     )
 
-# Eine Funktion, die die Heuristik für eine Stadt berechnet
-def calculate_heuristic(city, budget):
-    # Erhalte die Bewertung der Stadt
-    rating = city[1].rating
-    # Erhalte die Kosten für die Fahrt zur Stadt
-    cost = float(city[1].ticket_cost) + float(city[1].hotel_cost)
-    # Berechne einen Faktor, der die Kosten widerspiegelt
-    cost_factor = 1 - (cost / budget)
-    # Berechne die Heuristik, indem du die Bewertung mit dem Faktor multiplizierst
-    heuristic = rating * cost_factor
-    # Gib die Heuristik zurück
-    return heuristic
-
-# Eine Funktion, die die Heuristik für eine Route berechnet
-def calculate_route_heuristic(route, budget):
-    # Erstelle eine Variable für die Heuristik der Route
-    route_heuristic = 0
-    # Iteriere über die Städte in der Route
-    for city in route:
-        # Berechne die Heuristik für die Stadt
-        city_heuristic = calculate_heuristic(city, budget)
-        # Addiere die Heuristik für die Stadt zur Heuristik der Route
-        route_heuristic += city_heuristic
-    # Gib die Heuristik der Route zurück
-    return route_heuristic
-
 def calculate_driving_cost(city1, city2):
     fuel_factor = 0.1
     distance = geodesic(city1.gps, city2.gps).km
@@ -117,13 +92,19 @@ def calculate_total_price(route_, budget):
     total_price = 0
     new_route = []
     route = []
+    current_hotel_cost = 0.0
+    current_ticket_cost = 0.0
+    current_total_cost = 0.0
     for city_name in route_:
         if city_name in cities:  # Prüfen Sie, ob der Stadtname ein Schlüssel im cities Dictionary ist
+            cities[city_name].update_driving_cost(0.0)
+            cities[city_name].update_distance_km(0.0)
             route.append(cities[city_name])  # Fügen Sie das City-Objekt zur Liste r hinzu
     for city in route:
         current_hotel_cost = float(city.hotel_cost)
         current_ticket_cost = float(city.ticket_cost)
-        current_total_cost = current_hotel_cost + current_ticket_cost
+        if city != route[0]:
+            current_total_cost = current_hotel_cost + current_ticket_cost
 
         # Prüfen, ob das aktuelle Gesamtkostenbudget überschritten wird
         if (current_total_cost + total_price) <= budget:
@@ -133,16 +114,23 @@ def calculate_total_price(route_, budget):
             # Wenn dies nicht die letzte Stadt ist, berechnen Sie die Fahrtkosten zur nächsten Stadt
             if route.index(city) < len(route) - 1:
                 next_city = route[route.index(city) + 1]
-                current_driving_cost = calculate_driving_cost(city, next_city)
-                
+                current_driving_cost = calculate_driving_cost(city, next_city) 
+                distance = geodesic(city.gps, next_city.gps).km
                 # Prüfen, ob das Hinzufügen der Fahrtkosten das Budget überschreitet
                 if (current_driving_cost + total_price) <= budget:
                     total_price += current_driving_cost
+                    next_city.update_driving_cost(current_driving_cost)
+                    next_city.update_distance_km(distance)
                 else:
                     # Wenn das Budget überschritten wird, beenden Sie die Schleife
+                    city.update_driving_cost(0.0)
+                    city.update_distance_km(0.0)
                     break
         else:
             # Wenn das Budget überschritten wird, beenden Sie die Schleife
+            city.update_driving_cost(0.0)
+            city.update_distance_km(0.0)
+
             break
 
     return total_price, new_route
