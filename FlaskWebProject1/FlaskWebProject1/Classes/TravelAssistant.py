@@ -47,6 +47,7 @@ class TravelAssistant:
 
         # Aufteilen in Trainings- und Testdaten
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        
         # Erstellen der Pipeline
         pipeline = Pipeline(steps=[
             ('preprocessor', preprocessor),
@@ -60,25 +61,31 @@ class TravelAssistant:
         predictions = pipeline.predict(X_test)
         model_mse = mean_squared_error(y_test, predictions)
         
-
         # Vorhersagen vorbereiten
-        predictions = {}
-        for city in X['Ziel'].unique():
-            city_data = X[X['Ziel'] == city]        
-            # Benutzerpraeferenzen aktualisieren
+        user_predictions = {}
+        for city in self.cities:
+            city_data = X[X['Ziel'] == city].iloc[0:1].copy()  # eine Kopie der ersten Zeile für die Stadt
+            # Benutzerpräferenzen aktualisieren
             for feature, value in self.new_user_preferences.items():
                 if feature in city_data:
                     city_data[feature] = value
+            # Nur eine Zeile vorhersagen
             city_pred = pipeline.predict(city_data)[0]
-            predictions[city] = city_pred
+            user_predictions[city] = city_pred
+            
+            # Aktualisieren der Bewertung in cities dictionary
+            if self.cities[city].name == city:
+                self.cities[city].update_rating(city_pred)
         
         # Sortieren der Vorhersagen
-        predictions = OrderedDict(sorted(predictions.items(), key=lambda x: x[1], reverse=True))
+        sorted_predictions = OrderedDict(sorted(user_predictions.items(), key=lambda x: x[1], reverse=True))
+
+        # Gesamtbewertung berechnen
+        total_rating = sum(user_predictions.values())
+        average_rating = total_rating / len(user_predictions) if user_predictions else None
 
         # Vorhersagen ausgeben
-        for city, pred in predictions.items():
-            print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred} ")
-            if self.cities[city].name == city:
-                self.cities[city].update_rating(pred)
+        for city, pred in sorted_predictions.items():
+            print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred}")
 
-        return self.cities, model_mse
+        return self.cities, model_mse, average_rating

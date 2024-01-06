@@ -16,7 +16,7 @@ class TravelPlanner:
         cost = self.cities[city_name].get_cost()
         cost_factor = max(0, (self.budget - cost) / self.budget)
         return cost_factor
-
+        
     def calculate_score(self, city, current_city):
         # Berechne den Score basierend auf Bewertungen und Entfernung
         rating = self.cities[city].rating
@@ -62,6 +62,15 @@ class TravelPlanner:
             germany_geojson,
             name='Germany GeoJSON'
         ).add_to(football_map)
+        for city_name, city_obj in self.cities.items():
+            coords = city_obj.gps
+            rating = city_obj.rating
+            folium.Marker(
+                location=coords,
+                tooltip=f'{city_name}, Bewertung = {round(rating, 2)}',
+                icon=folium.Icon(icon='futbol', prefix='fa', color='red')
+            ).add_to(football_map)
+            
         # Hinzufügen von Markern für jede Stadt in der Route
         for index, city in enumerate(route):
             if city in self.cities:
@@ -70,7 +79,7 @@ class TravelPlanner:
                 folium.Marker(
                     location=coords,
                     tooltip=f'{index} - {city}, Bewertung = {round(rating,2)}',
-                    icon=folium.Icon(icon=f'futbol', prefix='fa', color='red')
+                    icon=folium.Icon(icon=f'futbol', prefix='fa', color='green')
                 ).add_to(football_map)
             index = index + 1
 

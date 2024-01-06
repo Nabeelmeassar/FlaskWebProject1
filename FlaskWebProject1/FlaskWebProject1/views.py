@@ -26,12 +26,12 @@ def post_preference_json_handler():
     budget = int(content.get('Person_Budget'))
     preis_hoch = int(content.get('Preis_hoch'))
     travelAssistant = TravelAssistant(csv_data_path, content, cities )
-    city_with_rating, mse = travelAssistant.predict_user_preferences()
+    city_with_rating, mse, average_rating = travelAssistant.predict_user_preferences()
     if preis_hoch == 1:
         content.update({'budget': budget - 200})
         budget -= 200  # Verringere das Budget
         travelAssistant = TravelAssistant(csv_data_path, content, cities )
-        city_with_rating, mse = travelAssistant.predict_user_preferences()
+        city_with_rating, mse, average_rating = travelAssistant.predict_user_preferences()
     travelPlanner = TravelPlanner(cities, gewicht, budget )
     routes = travelPlanner.best_first_search(select_start)
     route = {city.id: city for city in cities.values() if city.name in routes}
@@ -47,7 +47,8 @@ def post_preference_json_handler():
             'm_html': map_html,
             'route': new_route,
             'mse': mse,
-            'total_price': round(total_price, 2)
+            'total_price': round(total_price, 2),
+            'average_rating':average_rating
     })
     # Return the modified content as JSON
     return jsonify(content)

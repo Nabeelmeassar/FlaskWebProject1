@@ -15,12 +15,7 @@
             // Angenommen, Sie haben ein Objekt mit Städten als Schlüsseln und Scores als Werten.
             var cityScores = jsonResponse.city_score
             console.log(cityScores)
-            mymap.innerHTML = '<h2>Kartenuebersicht</h2>'; 
-            mymap.innerHTML += jsonResponse.route; 
-            mymap.innerHTML += '<h3 class = "alert alert-primary">Gesamtkosten = ' + jsonResponse.total_price + ' €  </h3>'; 
-            console.log(jsonResponse.total_price)
-            console.log(jsonResponse)
-            mymap.innerHTML += jsonResponse.m_html;
+            mymap.innerHTML = '<h3>Kartenuebersicht</h3>';            
             mymap.style.visibility = 'visible';
 
             var ratingsArray = [];
@@ -58,7 +53,7 @@
                     htmlContent += '<td class ="text-success bold"> Start ' + city + '</td>'; // City Name
                 else
                     htmlContent += '<td>' + city + '</td>'; // City Name
-                htmlContent += '<td>' + cityData.rating.toFixed(2) +' <br />'+ createStars(cityData.rating.toFixed(0)) + '</td>'; // Rating
+                htmlContent += '<td>' + cityData.rating.toFixed(2) +' <br />'+ createStars(cityData.rating.toFixed(2)) + '</td>'; // Rating
                 htmlContent += '<td>' + cityData.hotel_cost + ' €</td>';
                 htmlContent += '<td>' + cityData.ticket_cost + ' €</td>';
                 if (cityData.driving_cost != 0.0) {
@@ -81,8 +76,13 @@
 
             // Close the table tag
             htmlContent += '</table>';
-            mymap.innerHTML += '<h3 class = "alert">Gesamtdistanz = ' + dista_in_km.toFixed(2) + ' Km  </h3>';
-            alert(dista_in_km.toFixed(2) + 'km')
+            mymap.innerHTML += `
+                          <h3> Route => ${jsonResponse.route}
+                            Gesamtkosten = ${jsonResponse.total_price}€,
+                            Reisebewertung ${createStars(jsonResponse.average_rating.toFixed(2))} ${jsonResponse.average_rating.toFixed(2)}, 
+                            Gesamte Distanz ${dista_in_km.toFixed(2) } Km
+                          </h4>`;
+            mymap.innerHTML += jsonResponse.m_html;
 
             // Assuming 'entscheidungContentElement' is a valid DOM element.
             entscheidungContentElement.innerHTML = htmlContent;
@@ -112,18 +112,27 @@
     xhr.send(JSON.stringify(data));
 }
 function createStars(rating) {
-    // Definieren Sie die maximale Anzahl von Sternen
+    // Definieren Sie die maximale Anzahl von Sternen und die HTML für die Sterne
     const maxStars = 5;
     let starsHTML = '';
 
-    // Fügen Sie gefüllte Sterne hinzu, basierend auf der Bewertung
-    for (let i = 0; i < rating; i++) {
-        starsHTML += '&#9733;'; // Gefüllter Stern
+    // Ganze gefüllte Sterne hinzufügen
+    for (let i = 0; i < Math.floor(rating); i++) {
+        starsHTML += '<span style="color: gold;">&#9733;</span>'; // Gefüllter Stern in Goldfarbe
     }
 
-    // Fügen Sie leere Sterne hinzu, um die maximale Anzahl zu erreichen
-    for (let i = rating; i < maxStars; i++) {
-        starsHTML += '&#9734;'; // Leerstern
+    // Einen teilweise gefüllten Stern hinzufügen, wenn es einen Dezimalanteil gibt
+    if (rating % 1 !== 0) {
+        const widthPercent = Math.round((rating % 1) * 100); // Prozent des teilweise gefüllten Sterns
+        starsHTML += `<span style="display: inline-block; position: relative; color: #ccc;">&#9733;`; // Leerstern in hellem Grau
+        starsHTML += `<span style="position: absolute; left: 0; top: 0; width: ${widthPercent}%; overflow: hidden; color: gold;">&#9733;</span>`; // Überlagerung mit teilweise gefülltem Stern in Goldfarbe
+        starsHTML += `</span>`;
+    }
+
+    // Leere Sterne hinzufügen, um die maximale Anzahl zu erreichen
+    const totalStarsDisplayed = Math.ceil(rating);
+    for (let i = totalStarsDisplayed; i < maxStars; i++) {
+        starsHTML += '<span style="color: #ccc;">&#9734;</span>'; // Leerstern in hellem Grau
     }
 
     return starsHTML;
