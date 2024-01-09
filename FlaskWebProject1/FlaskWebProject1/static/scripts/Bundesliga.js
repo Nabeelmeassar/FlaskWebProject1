@@ -78,7 +78,7 @@
             htmlContent += '</table>';
             mymap.innerHTML = `
                           <h3>
-                            Gesamtkosten ist ${jsonResponse.total_price}€,
+                            Gesamtkosten ist ${jsonResponse.total_price} €,
                             Reisebewertung ist ${createStars(jsonResponse.average_rating.toFixed(2))} ${jsonResponse.average_rating.toFixed(2)}, 
                             Gesamte Distanz ist ${dista_in_km.toFixed(2) } Km
                             Dauer ${jsonResponse.tage } Tage

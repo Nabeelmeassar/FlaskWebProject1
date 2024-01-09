@@ -80,12 +80,8 @@ class TravelAssistant:
         # Sortieren der Vorhersagen
         sorted_predictions = OrderedDict(sorted(user_predictions.items(), key=lambda x: x[1], reverse=True))
 
-        # Gesamtbewertung berechnen
-        total_rating = sum(user_predictions.values())
-        average_rating = total_rating / len(user_predictions) if user_predictions else None
-
         # Vorhersagen ausgeben
         for city, pred in sorted_predictions.items():
             print(f"Stadt: {city}, Vorhergesagte Bewertung: {pred}")
 
-        return self.cities, model_mse, average_rating
+        return self.cities, model_mse

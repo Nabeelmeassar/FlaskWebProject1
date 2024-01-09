@@ -10,7 +10,6 @@ from datetime import datetime
 from FlaskWebProject1.Classes.city import get_cities
 from FlaskWebProject1.Classes.TravelAssistant import TravelAssistant
 from FlaskWebProject1.Classes.TravelPlanner import TravelPlanner
-from FlaskWebProject1.Classes.RoutePlanner import RoutePlanner
 
 
 cities = get_cities()
@@ -33,29 +32,26 @@ def post_preference_json_handler():
     travelAssistant = TravelAssistant(csv_data_path, content, cities)
     
     # Berechnet die Benutzerpräferenzen basierend auf den angegebenen Daten
-    city_with_rating, mse, average_rating = travelAssistant.predict_user_preferences()
+    city_with_rating, mse = travelAssistant.predict_user_preferences()
     
     # Wenn der Benutzer bereit ist, mehr zu bezahlen, aktualisiere das Budget
     if preis_hoch == 1:
         content.update({'budget': budget - 200})
         budget -= 200  # Verringere das Budget
         travelAssistant = TravelAssistant(csv_data_path, content, cities)
-        city_with_rating, mse, average_rating = travelAssistant.predict_user_preferences()
+        city_with_rating, mse = travelAssistant.predict_user_preferences()
     
     # Erstellt eine Instanz von TravelPlanner, um die beste Route zu finden
-    travelPlanner = TravelPlanner(cities, gewicht, budget)
+    travelPlanner = TravelPlanner(cities, gewicht,freie_tage, budget)
     
     # Verwendet den Algorithmus "Best-First-Search" zur Routenfindung
     routes = travelPlanner.best_first_search(select_start)
     
     # Erstellt ein Wörterbuch der Städte auf der Route
     route = {city.id: city for city in cities.values() if city.name in routes}
-    
-    # Erstellt eine Instanz von RoutePlanner, um die Gesamtkosten der Route zu berechnen
-    planner = RoutePlanner(cities, budget, freie_tage, routes)
-    
+     
     # Berechnet die Gesamtkosten, die neue Route und die Anzahl der Tage
-    total_price, new_route, tage = planner.calculate_total_price()
+    total_price, new_route, tage, average_rating = travelPlanner.calculate_total_price(routes)
     
     # Erstellt eine Karte für die Route mit den definierten Städten
     football_map = travelPlanner.create_rout_map(new_route)

@@ -34,9 +34,6 @@
     <Compile Include="FlaskWebProject1\Classes\Distance.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FlaskWebProject1\Classes\RoutePlanner.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="FlaskWebProject1\Classes\TravelPlanner.py" />
     <Compile Include="FlaskWebProject1\Classes\stadion.py">
       <SubType>Code</SubType>
