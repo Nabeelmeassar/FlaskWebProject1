@@ -5,7 +5,7 @@
     xhr.setRequestHeader("Content-Type", "application/json");
     var entscheidungContentElement = document.getElementById('entscheidung_content');
     var mymap = document.getElementById('mapdiv');
-    var city_score_div = document.getElementById('city_score');
+    var feedback_div = document.getElementById('feedback_div');
     entscheidungContentElement.innerHTML = '';
 
     xhr.onreadystatechange = function () {
@@ -15,8 +15,8 @@
             // Angenommen, Sie haben ein Objekt mit Städten als Schlüsseln und Scores als Werten.
             var cityScores = jsonResponse.city_score
             console.log(cityScores)
-            mymap.innerHTML = '<h3>Kartenuebersicht</h3>';            
             mymap.style.visibility = 'visible';
+            feedback_div.style.visibility = 'visible';
 
             var ratingsArray = [];
             for (var city in cityRatings) {
@@ -50,7 +50,7 @@
                 htmlContent += '<td>' + (i + 1) + '</td>'; // Count, i starts from 0, hence (i + 1).
                 htmlContent += '<td>' + cityData.id + '</td>'; // City ID
                 if (startCity == city)
-                    htmlContent += '<td class ="text-success bold"> Start ' + city + '</td>'; // City Name
+                    htmlContent += '<td class ="text-success bold"> Start von ' + city + '</td>'; // City Name
                 else
                     htmlContent += '<td>' + city + '</td>'; // City Name
                 htmlContent += '<td>' + cityData.rating.toFixed(2) +' <br />'+ createStars(cityData.rating.toFixed(2)) + '</td>'; // Rating
@@ -66,8 +66,8 @@
                     htmlContent += '<td>' + cost.toFixed(2) + ' €</td>';
                     htmlContent += '<td>' + cityData.distance_km.toFixed(2) + ' Km</td>';
                 } else {
-                    htmlContent += '<td>-€</td>';
-                    htmlContent += '<td>-€</td>';
+                    htmlContent += '<td>-</td>';
+                    htmlContent += '<td>-</td>';
                     htmlContent += '<td>-</td>';
                 }
 
@@ -76,12 +76,14 @@
 
             // Close the table tag
             htmlContent += '</table>';
-            mymap.innerHTML += `
-                          <h3> Route => ${jsonResponse.route}
-                            Gesamtkosten = ${jsonResponse.total_price}€,
-                            Reisebewertung ${createStars(jsonResponse.average_rating.toFixed(2))} ${jsonResponse.average_rating.toFixed(2)}, 
-                            Gesamte Distanz ${dista_in_km.toFixed(2) } Km
-                          </h4>`;
+            mymap.innerHTML = `
+                          <h3>
+                            Gesamtkosten ist ${jsonResponse.total_price}€,
+                            Reisebewertung ist ${createStars(jsonResponse.average_rating.toFixed(2))} ${jsonResponse.average_rating.toFixed(2)}, 
+                            Gesamte Distanz ist ${dista_in_km.toFixed(2) } Km
+                            Dauer ${jsonResponse.tage } Tage
+                          </h4>
+                <p> Route => ${ jsonResponse.route}</p>`;
             mymap.innerHTML += jsonResponse.m_html;
 
             // Assuming 'entscheidungContentElement' is a valid DOM element.
@@ -93,7 +95,10 @@
     // Get the form element by its ID
     var formElement = document.getElementById('preferenceForm');
     var formData = new FormData(formElement);
-
+    var bewertung_gewichtElement = document.getElementById('bewertung_gewicht');
+    var bewertung_gewichtValue = bewertung_gewichtElement.value;
+    var preis_hoch_Element = document.getElementById('preis_hoch');
+    var preis_hochValue = preis_hoch_Element.value;
     // Construct the data object with the form values
     var data = {
         'Person_Budget': formData.get('Person_Budget'),
@@ -104,10 +109,9 @@
         'Person_Traditionsfussballfan': formData.get('Person_Traditionsfussballfan'),
         'Person_Schnaeppchenjaeger': formData.get('Person_Schnaeppchenjaeger'),
         'Partygaenger': formData.get('Partygaenger'),
-        'Gewicht': formData.get('bewertung_gewicht'),
-        'Preis_hoch': formData.get('preis_hoch'),
+        'Gewicht': bewertung_gewichtValue,
+        'Preis_hoch': preis_hochValue,
     };
-
     // Send the JSON string to the server
     xhr.send(JSON.stringify(data));
 }

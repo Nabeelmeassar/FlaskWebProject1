@@ -34,6 +34,9 @@
     <Compile Include="FlaskWebProject1\Classes\Distance.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FlaskWebProject1\Classes\RoutePlanner.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FlaskWebProject1\Classes\TravelPlanner.py" />
     <Compile Include="FlaskWebProject1\Classes\stadion.py">
       <SubType>Code</SubType>
@@ -67,7 +70,7 @@
     <Content Include="FlaskWebProject1\static\csv\spielplan.csv" />
     <Content Include="FlaskWebProject1\static\csv\kostendaten.csv" />
     <Content Include="FlaskWebProject1\static\csv\gesamtroute.csv" />
-    <Content Include="FlaskWebProject1\static\csv\data.csv" />
+    <Content Include="FlaskWebProject1\static\csv\training_data.csv" />
     <Content Include="FlaskWebProject1\static\csv\verein.csv" />
     <Content Include="FlaskWebProject1\static\csv\cities_data.csv" />
     <Content Include="FlaskWebProject1\static\imags\bundesliga_baum.png" />

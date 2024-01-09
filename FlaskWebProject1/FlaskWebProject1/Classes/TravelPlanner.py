@@ -5,7 +5,6 @@ import folium
 
 from geopy.distance import geodesic
 class TravelPlanner:
-
     def __init__(self, cities, gewicht, budget):
         self.cities = cities
         self.gewicht = gewicht  # Dieser Wert bestimmt, wie stark das Rating gewichtet wird.
