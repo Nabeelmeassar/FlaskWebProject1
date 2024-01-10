@@ -70,7 +70,8 @@ def post_preference_json_handler():
         'mse': mse,
         'total_price': round(total_price, 2),
         'average_rating': average_rating,
-        'tage': tage
+        'tage': tage,
+        'mse': mse,
     })
     
     # Gibt den aktualisierten Inhalt als JSON zurück
