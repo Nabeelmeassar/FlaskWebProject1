@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "FlaskWebProject1", "FlaskWebProject1\FlaskWebProject1.pyproj", "{BCFDA357-9A99-41A5-8FD6-C4D7ACFECC5D}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Intelligenter_Reiseassistent", "FlaskWebProject1\Intelligenter_Reiseassistent.pyproj", "{BCFDA357-9A99-41A5-8FD6-C4D7ACFECC5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

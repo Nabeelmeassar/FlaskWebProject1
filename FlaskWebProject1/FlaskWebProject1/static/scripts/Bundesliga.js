@@ -5,7 +5,7 @@
     xhr.setRequestHeader("Content-Type", "application/json");
     var entscheidungContentElement = document.getElementById('entscheidung_content');
     var mymap = document.getElementById('mapdiv');
-    var feedback_div = document.getElementById('feedback_div');
+    //var feedback_div = document.getElementById('feedback_div');
     entscheidungContentElement.innerHTML = '';
 
     xhr.onreadystatechange = function () {
@@ -16,7 +16,7 @@
             var cityScores = jsonResponse.city_score
             console.log(cityScores)
             mymap.style.visibility = 'visible';
-            feedback_div.style.visibility = 'visible';
+            //feedback_div.style.visibility = 'visible';
 
             var ratingsArray = [];
             for (var city in cityRatings) {
@@ -93,24 +93,19 @@
     };
 
     // Get the form element by its ID
-    var formElement = document.getElementById('preferenceForm');
-    var formData = new FormData(formElement);
-    var bewertung_gewichtElement = document.getElementById('bewertung_gewicht');
-    var bewertung_gewichtValue = bewertung_gewichtElement.value;
-    var preis_hoch_Element = document.getElementById('preis_hoch');
-    var preis_hochValue = preis_hoch_Element.value;
+    var formData = new FormData(preferenceForm);
     // Construct the data object with the form values
     var data = {
         'Person_Budget': formData.get('Person_Budget'),
         'Select_start': formData.get('select_start'),
         'Tage': formData.get('tage'),
+        'Tage': formData.get('bewertung_gewicht'),
         //'Person_Max_Distanz': formData.get('Person_Max_Distanz'),
         'Person_Entertainment_Fussballfan': formData.get('Person_Entertainment_Fussballfan'),
         'Person_Traditionsfussballfan': formData.get('Person_Traditionsfussballfan'),
         'Person_Schnaeppchenjaeger': formData.get('Person_Schnaeppchenjaeger'),
         'Partygaenger': formData.get('Partygaenger'),
-        'Gewicht': bewertung_gewichtValue,
-        'Preis_hoch': preis_hochValue,
+        'Gewicht': formData.get('bewertung_gewicht'),
     };
     // Send the JSON string to the server
     xhr.send(JSON.stringify(data));

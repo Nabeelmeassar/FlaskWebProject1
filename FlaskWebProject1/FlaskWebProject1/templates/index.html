@@ -35,7 +35,7 @@
                         </div>
                         <div>
                             <select class="form-select select_sy" id="budget" name="Person_Budget">
-                                {% for bug in range(500, 2000, 50) %}
+                                {% for bug in range(500, 2050, 50) %}
                                 <option value="{{bug}}">{{bug}} Euro</option>
                                 {% endfor %}
                             </select>
@@ -88,6 +88,17 @@
                             <input class="form-check-input" type="radio" name="Partygaenger" id="partygaengerNein" value="0">
                             <label class="form-check-label" for="partygaengerNein">Nein</label>
                         </div>
+                        <div class="form-check form-check-inline">
+                            <select class="form-select select_sy" id="bewertung_gewicht" name="bewertung_gewicht">
+                                <!--<option value="3">-</option>-->
+                                <!--<option value="2">kuerzerer Weg</option>-->
+                                bewertung_gewicht
+                                <!--<option value="10">Stadt Bewertung ist mir wichtig</option>-->
+                                {% for g in range(0, 11, 2) %}
+                                <option value="{{g}}">{{g}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                         <div class="m-2">
                             <!-- Send button that calls the "sendPreferenceFormData()" function when clicked -->
                             <button class="btn btn-primary" type="button" onclick="sendPreferenceFormData()">Reise planen</button>
@@ -98,26 +109,9 @@
                 </div>
             </div>
             <div class="col-sm-8">
-                <!--<h2 class="alert alert-info">Kartenuebersicht</h2>-->
-                <div class="row not_show" id="feedback_div">
-                    <div>
-                        <label for="bewertung_gewicht">Feedback :</label>
-                    </div>
-                    <div class="col-sm-3">
-                        <select class="form-select select_sy" id="bewertung_gewicht" onchange="sendPreferenceFormData()" name="bewertung_gewicht">
-                            <option value="3">-</option>
-                            <option value="0">kuerzerer Weg</option>
-                            <option value="10">Stadt Bewertung ist mir wichtig</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <select class="form-select select_sy" id="preis_hoch" onchange="sendPreferenceFormData()" name="preis_hoch">
-                            <option value="0">-</option>
-                            <option value="1">Preis ist zu Hoch!</option>
-                        </select>
-                    </div>
+                <div class="not_show m-2" id="mapdiv">
+                    <h2 class="alert alert-info">Kartenuebersicht</h2>
                 </div>
-                <div class="not_show m-2" id="mapdiv"></div>
             </div>
             <div class="col-sm-3"></div>
                 <div class="col-sm-8">

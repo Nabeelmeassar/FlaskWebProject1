@@ -14,6 +14,8 @@ from FlaskWebProject1.Classes.TravelPlanner import TravelPlanner
 
 cities = get_cities()
 csv_data_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\csv\\training_data.csv'
+ # Pfad zur GeoJSON-Datei von Deutschland
+germany_geojson_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\scripts\\2_hoch.geo.json'
 
 @app.route('/post_preference_json', methods=['POST'])
 
@@ -26,20 +28,12 @@ def post_preference_json_handler():
     freie_tage = int(content.get('Tage'))
     gewicht = int(content.get('Gewicht'))
     budget = int(content.get('Person_Budget'))
-    preis_hoch = int(content.get('Preis_hoch'))
     
     # Erstellt eine Instanz von TravelAssistant, um Benutzerpräferenzen zu berechnen
     travelAssistant = TravelAssistant(csv_data_path, content, cities)
     
     # Berechnet die Benutzerpräferenzen basierend auf den angegebenen Daten
     city_with_rating, mse = travelAssistant.predict_user_preferences()
-    
-    # Wenn der Benutzer bereit ist, mehr zu bezahlen, aktualisiere das Budget
-    if preis_hoch == 1:
-        content.update({'budget': budget - 200})
-        budget -= 200  # Verringere das Budget
-        travelAssistant = TravelAssistant(csv_data_path, content, cities)
-        city_with_rating, mse = travelAssistant.predict_user_preferences()
     
     # Erstellt eine Instanz von TravelPlanner, um die beste Route zu finden
     travelPlanner = TravelPlanner(cities, gewicht,freie_tage, budget)
@@ -54,7 +48,7 @@ def post_preference_json_handler():
     total_price, new_route, tage, average_rating = travelPlanner.calculate_total_price(routes)
     
     # Erstellt eine Karte für die Route mit den definierten Städten
-    football_map = travelPlanner.create_rout_map(new_route)
+    football_map = travelPlanner.create_rout_map(new_route, germany_geojson_path)
     
     # Macht die Stadtinformationen serialisierbar für die JSON-Antwort
     cities_serializable = {city_name: city_obj.to_dict() for city_name, city_obj in cities.items()}

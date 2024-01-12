@@ -46,10 +46,7 @@ class TravelPlanner:
                             heapq.heappush(priority_queue, (-combined_score, city))
         return route
 
-    def create_rout_map(self, route, route_color='blue', route_weight=5):
-        # Pfad zur GeoJSON-Datei von Deutschland
-        germany_geojson_path = 'C:\\Users\\nn\\source\\repos\\FlaskWebProject1\\FlaskWebProject1\\FlaskWebProject1\\static\\scripts\\2_hoch.geo.json'
-    
+    def create_rout_map(self, route, germany_geojson_path, route_color='blue', route_weight=5):
         # Laden der GeoJSON-Datei
         with open(germany_geojson_path, 'r', encoding='utf-8') as f:
             germany_geojson = json.load(f)
@@ -99,6 +96,7 @@ class TravelPlanner:
 
         # R�ckgabe der erstellten Karte
         return football_map
+    
     def calculate_driving_cost(self, city1, city2):
         fuel_factor = 0.1
         distance = geodesic(city1.gps, city2.gps).km
@@ -151,3 +149,5 @@ class TravelPlanner:
             total_rating = sum(cities_new_route.values())
             average_rating = total_rating / len(cities_new_route) if cities_new_route else None
         return total_price, new_route, tage, average_rating
+    
+       
