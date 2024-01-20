@@ -84,6 +84,11 @@
                             Dauer ${jsonResponse.tage } Tage
                           </h4>
                 <p> Route => ${ jsonResponse.route}</p>`;
+
+            mymap.innerHTML +=`
+            <a href="${jsonResponse.google_map_route}/target="_blank" rel="noopener noreferrer">Google Map</a>
+            `;
+            mymap.innerHTML += jsonResponse.google_map_route;
             mymap.innerHTML += jsonResponse.m_html;
 
             // Assuming 'entscheidungContentElement' is a valid DOM element.
@@ -99,7 +104,6 @@
         'Person_Budget': formData.get('Person_Budget'),
         'Select_start': formData.get('select_start'),
         'Tage': formData.get('tage'),
-        'Tage': formData.get('bewertung_gewicht'),
         //'Person_Max_Distanz': formData.get('Person_Max_Distanz'),
         'Person_Entertainment_Fussballfan': formData.get('Person_Entertainment_Fussballfan'),
         'Person_Traditionsfussballfan': formData.get('Person_Traditionsfussballfan'),

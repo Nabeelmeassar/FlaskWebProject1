@@ -5,7 +5,7 @@
 {% block content %}
     <div class="m-5 alert">
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-6">
                 <div class="m-2 alert alert-info">
                     <h2>Benutzerpraeferenzen:</h2>
                     <form id="preferenceForm">
@@ -88,16 +88,12 @@
                             <input class="form-check-input" type="radio" name="Partygaenger" id="partygaengerNein" value="0">
                             <label class="form-check-label" for="partygaengerNein">Nein</label>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <select class="form-select select_sy" id="bewertung_gewicht" name="bewertung_gewicht">
-                                <!--<option value="3">-</option>-->
-                                <!--<option value="2">kuerzerer Weg</option>-->
-                                bewertung_gewicht
-                                <!--<option value="10">Stadt Bewertung ist mir wichtig</option>-->
-                                {% for g in range(0, 11, 2) %}
-                                <option value="{{g}}">{{g}}</option>
-                                {% endfor %}
-                            </select>
+                         <div class="container mt-3">
+                            <label for="bewertung_gewicht">Stadt Bewertung ist mir wichtig (0 bis 10):</label>
+                            <p class="small">
+                                (Hinweis: Bei einer hoeheren Gewichtung wird die Stadtbewertung hoeher gewichtet als die Reiseentfernung zum Reiseziel)
+                            </p>
+                            <input type="range" class="custom-range" id="bewertung_gewicht" value="5" name="bewertung_gewicht" min="0" max="10" step="1">
                         </div>
                         <div class="m-2">
                             <!-- Send button that calls the "sendPreferenceFormData()" function when clicked -->
@@ -107,18 +103,13 @@
                         </div>
                     </form>
                 </div>
+                <div class="not_show m-2" id="entscheidung_content"></div>
             </div>
-            <div class="col-sm-8">
-                <div class="not_show m-2" id="mapdiv">
+                <!--<h2 class="alert alert-info">Entscheidungsinformationen</h2>-->
+                <div class="col-sm-6 not_show m-2" id="mapdiv">
                     <h2 class="alert alert-info">Kartenuebersicht</h2>
                 </div>
-            </div>
-            <div class="col-sm-3"></div>
-                <div class="col-sm-8">
-                    <!--<h2 class="alert alert-info">Entscheidungsinformationen</h2>-->
-                    <div class="not_show m-2" id="entscheidung_content"></div>
-                </div>
-            </div>
+        </div>
         </div>
     {# Tips and links for further information #}
 

@@ -10,40 +10,46 @@ class TravelPlanner:
         self.freie_tage = freie_tage
         self.budget = budget
         
-    def calculate_heuristic(self, city_name):
-        # Berechne die Heuristik basierend auf Kosten
-        cost = self.cities[city_name].get_cost()
-        cost_factor = max(0, (self.budget - cost) / self.budget)
-        return cost_factor
-        
-    def calculate_score(self, city, current_city):
-        # Berechne den Score basierend auf Bewertungen und Entfernung
+    def calculate_cost_heuristic(self, city_name):
+            # Berechnet eine Heuristik für die Kosten einer Stadt, die bei der Entscheidungsfindung hilft.
+            cost = self.cities[city_name].get_cost()
+            # Je niedriger die Kosten, desto höher die Heuristik. Es wird eine Normalisierung auf das Budget durchgeführt.
+            cost_factor = max(0, (self.budget - cost) / self.budget)
+            return cost_factor
+    
+    def calculate_cost_score(self, city, current_city):
+        # Berechnet einen Score für jede Stadt basierend auf ihrer Bewertung, Entfernung zur aktuellen Stadt und den Kosten.
         rating = self.cities[city].rating
         distance = geodesic(self.cities[city].gps, self.cities[current_city].gps).km
-        # Verwende exponentielles Gewicht f�r das Rating und logarithmische Skalierung f�r die Entfernung
+        cost = self.cities[city].get_cost()
+        # Anwendung exponentiellen Gewichts auf die Bewertung und logarithmische Skalierung auf die Entfernung.
         weighted_rating = rating ** self.gewicht
-        log_distance = math.log(distance + 1)  # Verhindere log(0) mit +1
-        return weighted_rating / log_distance
+        log_distance = math.log(distance + 1)  # +1 verhindert Division durch Null.
+        # Einbeziehung der Kosten in den Score.
+        cost_factor = self.calculate_cost_heuristic(city)
+        # Der Score wird berechnet als gewichtete Bewertung dividiert durch die logarithmische Entfernung, multipliziert mit dem Kostenfaktor.
+        return (weighted_rating / log_distance) * cost_factor
 
     def best_first_search(self, start):
+        # Implementiert die Best-First-Suche, um die Route zu finden, die den besten Score bietet.
         visited = set()
-        priority_queue = [(-self.calculate_score(start, start), start)]
+        priority_queue = [(-self.calculate_cost_score(start, start), start)]
         route = []
         city_score = {}
         while priority_queue:
+            # Nimmt die Stadt mit dem höchsten Score aus der Warteschlange.
             _, current_city = heapq.heappop(priority_queue)
             if current_city not in visited:
+                # Fügt die Stadt zur Route hinzu und markiert sie als besucht.
                 visited.add(current_city)
                 route.append(current_city)
                 for city in self.cities:
+                    # Fügt Nachbarstädte zur Warteschlange hinzu, wenn sie nicht besucht wurden.
                     if city not in visited:
-                        score = self.calculate_score(city, current_city)
-                        heuristic = self.calculate_heuristic(city)
-                        # Kombiniere Score und Heuristik
-                        combined_score = score * heuristic
-                        if city not in city_score or city_score[city] < combined_score:
-                            city_score[city] = combined_score
-                            heapq.heappush(priority_queue, (-combined_score, city))
+                        score = self.calculate_cost_score(city, current_city)
+                        if city not in city_score or city_score[city] < score:
+                            city_score[city] = score
+                            heapq.heappush(priority_queue, (-score, city))
         return route
 
     def create_rout_map(self, route, germany_geojson_path, route_color='blue', route_weight=5):
@@ -96,7 +102,16 @@ class TravelPlanner:
 
         # R�ckgabe der erstellten Karte
         return football_map
-    
+    def create_google_maps_route_link(self, cities):
+        base_url = "https://www.google.com/maps/dir/"
+        route_parts = [city.replace(' ', '+') for city in cities]  # Ersetzt Leerzeichen durch '+' für URL-Kodierung
+        route_url = base_url + '/'.join(route_parts)
+        return route_url
+
+        # Beispiel: Erstellen eines Links für eine Route, die Berlin, München und Köln umfasst.
+        cities_route = ["Berlin", "München", "Köln"]
+        route_link = create_google_maps_route_link(cities_route)
+        return route_link
     def calculate_driving_cost(self, city1, city2):
         fuel_factor = 0.1
         distance = geodesic(city1.gps, city2.gps).km
@@ -149,5 +164,3 @@ class TravelPlanner:
             total_rating = sum(cities_new_route.values())
             average_rating = total_rating / len(cities_new_route) if cities_new_route else None
         return total_price, new_route, tage, average_rating
-    
-       

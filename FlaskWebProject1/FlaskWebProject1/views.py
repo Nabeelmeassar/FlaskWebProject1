@@ -49,6 +49,7 @@ def post_preference_json_handler():
     
     # Erstellt eine Karte für die Route mit den definierten Städten
     football_map = travelPlanner.create_rout_map(new_route, germany_geojson_path)
+    google_map_route = travelPlanner.create_google_maps_route_link(new_route)
     
     # Macht die Stadtinformationen serialisierbar für die JSON-Antwort
     cities_serializable = {city_name: city_obj.to_dict() for city_name, city_obj in cities.items()}
@@ -66,6 +67,7 @@ def post_preference_json_handler():
         'average_rating': average_rating,
         'tage': tage,
         'mse': mse,
+        'google_map_route': google_map_route,
     })
     
     # Gibt den aktualisierten Inhalt als JSON zurück
