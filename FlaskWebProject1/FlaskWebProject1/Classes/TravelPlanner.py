@@ -4,19 +4,21 @@ import math
 import folium
 from geopy.distance import geodesic
 class TravelPlanner:
+    # Eine Klasse, die die Informationen über eine Stadt speichert
     def __init__(self, cities, gewicht,freie_tage,budget):
         self.cities = cities
         self.gewicht = gewicht  # Dieser Wert bestimmt, wie stark das Rating gewichtet wird.
         self.freie_tage = freie_tage
         self.budget = budget
         
+    # Berechnet eine Heuristik für die Kosten einer Stadt, die bei der Entscheidungsfindung hilft.
     def calculate_cost_heuristic(self, city_name):
             # Berechnet eine Heuristik für die Kosten einer Stadt, die bei der Entscheidungsfindung hilft.
             cost = self.cities[city_name].get_cost()
             # Je niedriger die Kosten, desto höher die Heuristik. Es wird eine Normalisierung auf das Budget durchgeführt.
             cost_factor = max(0, (self.budget - cost) / self.budget)
             return cost_factor
-    
+    # Berechnet einen Score für jede Stadt basierend auf ihrer Bewertung, Entfernung zur aktuellen Stadt und den Kosten.
     def calculate_cost_score(self, city, current_city):
         # Berechnet einen Score für jede Stadt basierend auf ihrer Bewertung, Entfernung zur aktuellen Stadt und den Kosten.
         rating = self.cities[city].rating
@@ -29,7 +31,8 @@ class TravelPlanner:
         cost_factor = self.calculate_cost_heuristic(city)
         # Der Score wird berechnet als gewichtete Bewertung dividiert durch die logarithmische Entfernung, multipliziert mit dem Kostenfaktor.
         return (weighted_rating / log_distance) * cost_factor
-
+    
+    #Best-First-Search Algorithmus
     def best_first_search(self, start):
         # Implementiert die Best-First-Suche, um die Route zu finden, die den besten Score bietet.
         visited = set()
@@ -112,11 +115,6 @@ class TravelPlanner:
         cities_route = ["Berlin", "München", "Köln"]
         route_link = create_google_maps_route_link(cities_route)
         return route_link
-    def calculate_driving_cost(self, city1, city2):
-        fuel_factor = 0.1
-        distance = geodesic(city1.gps, city2.gps).km
-        driving_cost = distance * fuel_factor
-        return driving_cost
 
     def calculate_total_price(self, routes):
         total_price = 0
@@ -144,8 +142,10 @@ class TravelPlanner:
                 new_route.append(city.name)
                 if route.index(city) < len(route) - 1:
                     next_city = route[route.index(city) + 1]
-                    current_driving_cost = self.calculate_driving_cost(city, next_city)
+                    fuel_factor = 0.1
                     distance = geodesic(city.gps, next_city.gps).km
+                    driving_cost = distance * fuel_factor
+                    current_driving_cost = driving_cost
                     if (current_driving_cost + total_price) <= self.budget and tage < self.freie_tage:
                         total_price += current_driving_cost
                         tage += 1
